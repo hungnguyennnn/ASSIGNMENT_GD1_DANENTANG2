@@ -1,5 +1,6 @@
 import { router } from 'expo-router';
 import React, { useState, useEffect } from 'react';
+import { Feather } from '@expo/vector-icons';
 import {
   View,
   Text,
@@ -21,7 +22,7 @@ export default function DangNhap() {
   const [passwordFocused, setPasswordFocused] = useState(false);
   const [loginError, setLoginError] = useState('');
   const [isLoading, setIsLoading] = useState(false);
-
+  const [showPassword, setShowPassword] = useState(false);
   interface User {
     id: number;
     email: string;
@@ -126,16 +127,31 @@ export default function DangNhap() {
           keyboardType="default"
           autoCapitalize="none"
         />
-        <TextInput
-          placeholder="Mật khẩu"
-          secureTextEntry
-          style={[styles.input, passwordFocused && styles.inputFocused]}
-          value={password}
-          onChangeText={setPassword}
-          onFocus={() => setPasswordFocused(true)}
-          onBlur={() => setPasswordFocused(false)}
-          autoCapitalize="none"
-        />
+        <View style={styles.passwordInputContainer}>
+          <TextInput
+            placeholder="Mật khẩu"
+            secureTextEntry={!showPassword}
+            style={[
+              styles.input, 
+              styles.passwordInput,
+              passwordFocused && styles.inputFocused
+            ]}
+            value={password}
+            onChangeText={setPassword}
+            onFocus={() => setPasswordFocused(true)}
+            onBlur={() => setPasswordFocused(false)}
+          />
+          <TouchableOpacity 
+            style={styles.eyeIcon} 
+            onPress={() => setShowPassword(!showPassword)}
+          >
+            <Feather 
+              name={showPassword ? 'eye-off' : 'eye'} 
+              size={24} 
+              color="#888" 
+            />
+          </TouchableOpacity>
+        </View>
 
         {loginError ? <Text style={styles.errorText}>{loginError}</Text> : null}
 
@@ -332,5 +348,17 @@ const styles = StyleSheet.create({
   createAccountText: {
     color: 'green',
     fontWeight: 'bold',
+  },
+  passwordInputContainer: {
+    position: 'relative',
+    marginBottom: 15,
+  },
+  passwordInput: {
+    paddingRight: 40, 
+  },
+  eyeIcon: {
+    position: 'absolute',
+    right: 10,
+    top: 10,
   },
 });

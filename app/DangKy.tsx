@@ -1,3 +1,4 @@
+import { Feather } from '@expo/vector-icons';
 import { router } from 'expo-router';
 import React, { useState } from 'react';
 import {
@@ -15,12 +16,16 @@ export default function DangKy() {
   const [email, setEmail] = useState('');
   const [phoneNumber, setPhoneNumber] = useState('');
   const [password, setPassword] = useState('');
+  const [emailFocused, setEmailFocused] = useState(false);
+  const [passwordFocused, setPasswordFocused] = useState(false);
+  const [fullNameFocused, setFullNameFocused] = useState(false);
+  const [phoneNumberFocused, setPhoneNumberFocused] = useState(false);
   const [isAgreedToTerms, setIsAgreedToTerms] = useState(false);
   const [loginError, setLoginError] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleSignup = async () => {
     if (!fullName || !email || !phoneNumber || !password) {
-      // You might want to add more specific validation
       setLoginError('Vui lòng điền đầy đủ thông tin');
       return;
     }
@@ -50,7 +55,6 @@ export default function DangKy() {
         return;
       }
 
-      // Kiểm tra email đã tồn tại chưa
       const checkEmailResponse = await fetch(`http://192.168.1.8:3000/users?email=${email}`);
       const existingEmails = await checkEmailResponse.json();
 
@@ -104,34 +108,67 @@ export default function DangKy() {
 
         <TextInput
           placeholder="Họ tên"
-          style={styles.input}
+          style={[
+            styles.input,
+            fullNameFocused && styles.inputFocused
+          ]}
           value={fullName}
           onChangeText={setFullName}
+          onFocus={() => setFullNameFocused(true)}
+          onBlur={() => setFullNameFocused(false)}
         />
 
         <TextInput
           placeholder="E-mail"
-          style={styles.input}
+          style={[
+            styles.input,
+            emailFocused && styles.inputFocused
+          ]}
           value={email}
           onChangeText={setEmail}
           keyboardType="email-address"
+          onFocus={() => setEmailFocused(true)}
+          onBlur={() => setEmailFocused(false)}
         />
 
         <TextInput
           placeholder="Số điện thoại"
-          style={styles.input}
+          style={[
+            styles.input,
+            phoneNumberFocused && styles.inputFocused
+          ]}
           value={phoneNumber}
           onChangeText={setPhoneNumber}
           keyboardType="phone-pad"
+          onFocus={() => setPhoneNumberFocused(true)}
+          onBlur={() => setPhoneNumberFocused(false)}
         />
 
-        <TextInput
-          placeholder="Mật khẩu"
-          secureTextEntry
-          style={styles.input}
-          value={password}
-          onChangeText={setPassword}
-        />
+        <View style={styles.passwordInputContainer}>
+          <TextInput
+            placeholder="Mật khẩu"
+            secureTextEntry={!showPassword}
+            style={[
+              styles.input,
+              styles.passwordInput,
+              passwordFocused && styles.inputFocused
+            ]}
+            value={password}
+            onChangeText={setPassword}
+            onFocus={() => setPasswordFocused(true)}
+            onBlur={() => setPasswordFocused(false)}
+          />
+          <TouchableOpacity
+            style={styles.eyeIcon}
+            onPress={() => setShowPassword(!showPassword)}
+          >
+            <Feather
+              name={showPassword ? 'eye-off' : 'eye'}
+              size={24}
+              color="#888"
+            />
+          </TouchableOpacity>
+        </View>
 
         {loginError ? (
           <Text style={styles.errorText}>{loginError}</Text>
@@ -308,5 +345,21 @@ const styles = StyleSheet.create({
   loginLinkText: {
     color: 'green',
     fontWeight: 'bold',
+  },
+  inputFocused: {
+    borderColor: '#009245',
+    borderWidth: 2,
+  },
+  passwordInputContainer: {
+    position: 'relative',
+    marginBottom: 15,
+  },
+  passwordInput: {
+    paddingRight: 40, 
+  },
+  eyeIcon: {
+    position: 'absolute',
+    right: 10,
+    top: 10,
   },
 });

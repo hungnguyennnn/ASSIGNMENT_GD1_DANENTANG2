@@ -8,12 +8,12 @@
       "password": "123456",
       "cart": [
         {
-          "id": "d411ca32-f59d-4f0b-ba3f-faf1c2196ad4",
-          "productId": "2",
-          "name": "Song of India",
-          "price": "265.000đ",
-          "image": "https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lpok3ii87tck9c",
-          "quantity": 3
+          "id": "d03cdd03-ab1c-4c1c-a941-fb724fb9e3af",
+          "productId": "1",
+          "name": "Spider Plant",
+          "price": "250.000đ",
+          "image": "https://www.flowerstation.co.uk/cdn/shop/files/spider-plant-res-brown__30216.1691515154.800.800.jpg?v=1720103432",
+          "quantity": 1
         }
       ]
     },
@@ -23,7 +23,32 @@
       "email": "abc@gmail.com",
       "phoneNumber": "0987023237",
       "password": "hung2k54",
-      "cart": []
+      "cart": [
+        {
+          "id": "65344720-21dd-4c6c-b139-98c4715d2b75",
+          "productId": "2",
+          "name": "Planta Dove Grey",
+          "price": "150.000đ",
+          "image": "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcRxlYGGNe1kEC5GM7b89GPdNP_EIAPBLwIHvx9NojYFchAfO34W",
+          "quantity": 3
+        },
+        {
+          "id": "741bed44-610f-4bc2-9b25-10bc115bb652",
+          "productId": "3",
+          "name": "Planta Trắng",
+          "price": "250.000đ",
+          "image": "https://mayflowers.ca/cdn/shop/files/IMG_6362.jpg?v=1690467312&width=493",
+          "quantity": 1
+        },
+        {
+          "id": "54c0aa4a-65cd-4306-b230-16055c0c2a77",
+          "productId": "4",
+          "name": "Giá đỡ Finn Terrazzo",
+          "price": "1.250.000đ",
+          "image": "https://casanha.com/wp-content/uploads/2024/12/kiotviet_127ae7cc74e88c86e35242c50a477470.jpg",
+          "quantity": 3
+        }
+      ]
     },
     {
       "id": "ec7uq82dw",
@@ -89,14 +114,14 @@
       "name": "Planta Dove Grey",
       "price": "150.000đ",
       "image": "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcRxlYGGNe1kEC5GM7b89GPdNP_EIAPBLwIHvx9NojYFchAfO34W",
-      "quantity": 184
+      "quantity": 182
     },
     {
       "id": "3",
       "name": "Planta Trắng",
       "price": "250.000đ",
       "image": "https://mayflowers.ca/cdn/shop/files/IMG_6362.jpg?v=1690467312&width=493",
-      "quantity": 324
+      "quantity": 323
     },
     {
       "id": "4",
@@ -133,7 +158,7 @@
       "name": "Giá đỡ Finn Terrazzo",
       "price": "1.250.000đ",
       "image": "https://casanha.com/wp-content/uploads/2024/12/kiotviet_127ae7cc74e88c86e35242c50a477470.jpg",
-      "quantity": 124
+      "quantity": 121
     }
   ],
   "combos": [

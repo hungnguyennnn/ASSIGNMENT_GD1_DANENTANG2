@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, Modal  } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, Modal, Alert  } from 'react-native';
 import axios from 'axios';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import uuid from 'react-native-uuid';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 
@@ -27,6 +28,7 @@ export default function ProductDetail({ onCartUpdate }: ProductDetailProps) {
     const [quantity, setQuantity] = useState(0);
     const [totalPrice, setTotalPrice] = useState(0);
     const [modalVisible, setModalVisible] = useState(false);
+    const [userId, setUserId] = useState<string | null>(null);
 
     useEffect(() => {
         setQuantity(0); // Reset số lượng về 0 khi load sản phẩm mới
@@ -46,10 +48,8 @@ export default function ProductDetail({ onCartUpdate }: ProductDetailProps) {
             try {
                 const baseURL = 'http://192.168.1.8:3000';
                 console.log('Full URL:', `${baseURL}/${category}/${id}`);
-
                 const response = await axios.get(`${baseURL}/${category}/${id}`);
                 console.log('Response data:', response.data);
-
                 setProduct(response.data);
             } catch (error) {
                 console.error('Chi tiết lỗi:', error);
@@ -69,31 +69,79 @@ export default function ProductDetail({ onCartUpdate }: ProductDetailProps) {
         }
     };
 
+    useEffect(() => {
+        const fetchUserId = async () => {
+            try {
+                const storedUserId = await AsyncStorage.getItem('userId');
+                if (storedUserId) {
+                    setUserId(storedUserId);
+                } else {
+                    // If no user ID is found, you might want to handle this case 
+                    // (e.g., redirect to login, show an error)
+                    Alert.alert('Lỗi', 'Vui lòng đăng nhập');
+                }
+            } catch (error) {
+                console.error('Lỗi khi lấy userId:', error);
+                Alert.alert('Lỗi', 'Không thể xác định người dùng');
+            }
+        };
+
+        fetchUserId();
+    }, []);
+
+    // ... (keep other existing useEffects)
+
     const addToCart = async () => {
-        if (!product || quantity === 0) return;
+        if (!product || quantity === 0) {
+            Alert.alert('Lỗi', 'Vui lòng chọn số lượng sản phẩm');
+            return;
+        }
+
+        // Validate user is logged in
+        if (!userId) {
+            Alert.alert('Lỗi', 'Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng');
+            return;
+        }
     
         try {
             const baseURL = 'http://192.168.1.8:3000';
-            const userId = '04c7'; 
     
+            // Fetch current user data
             const userResponse = await axios.get(`${baseURL}/users/${userId}`);
+            console.log(userResponse);
             const userData = userResponse.data;
     
-            // Check if the product is already in the cart
+            // Validate product availability
+            if (product.quantity !== undefined && quantity > product.quantity) {
+                Alert.alert('Lỗi', `Chỉ còn ${product.quantity} sản phẩm trong kho`);
+                return;
+            }
+    
+            // Prepare cart update
             const existingCartItemIndex = userData.cart ? 
                 userData.cart.findIndex((item: any) => item.productId === product.id) 
                 : -1;
     
             let updatedCart;
+            const newTotalQuantity = existingCartItemIndex !== -1 
+                ? userData.cart[existingCartItemIndex].quantity + quantity 
+                : quantity;
+    
+            // Check total quantity against available stock
+            if (product.quantity !== undefined && newTotalQuantity > product.quantity) {
+                Alert.alert('Lỗi', `Số lượng sản phẩm vượt quá giới hạn. Chỉ còn ${product.quantity} sản phẩm.`);
+                return;
+            }
+    
             if (existingCartItemIndex !== -1) {
-                // If product exists, update its quantity
+                // Update existing cart item
                 updatedCart = [...userData.cart];
                 updatedCart[existingCartItemIndex] = {
                     ...updatedCart[existingCartItemIndex],
-                    quantity: updatedCart[existingCartItemIndex].quantity + quantity
+                    quantity: newTotalQuantity
                 };
             } else {
-                // If product doesn't exist, add new cart item
+                // Add new cart item
                 const newCartItem = {
                     id: uuid.v4().toString(),
                     productId: product.id,
@@ -112,20 +160,29 @@ export default function ProductDetail({ onCartUpdate }: ProductDetailProps) {
                 cart: updatedCart
             });
     
+            // Optional: Update product quantity in inventory
+            if (product.quantity !== undefined) {
+                await axios.patch(`${baseURL}/${category}/${id}`, {
+                    quantity: product.quantity - quantity
+                });
+            }
+    
+            // Trigger cart update callback
             if (onCartUpdate) {
                 onCartUpdate();
             }
             
+            // Show confirmation modal
             setModalVisible(true);
             
-            // Reset quantity to 0
+            // Reset quantity
             setQuantity(0);
             
         } catch (error) {
             console.error('Lỗi khi thêm vào giỏ hàng:', error);
+            Alert.alert('Lỗi', 'Không thể thêm sản phẩm vào giỏ hàng. Vui lòng thử lại.');
         }
     };
-
     // Xử lý chuyển đến trang giỏ hàng
     const chuyenDenGioHang = () => {
         setModalVisible(false);
@@ -173,7 +230,7 @@ export default function ProductDetail({ onCartUpdate }: ProductDetailProps) {
                                     resizeMode="contain"
                                 />
                                 <Text style={styles.modalMessage}>
-                                    Bạn đã thêm {quantity} {product?.name} vào giỏ hàng thành công!
+                                    Bạn đã thêm {product?.name} vào giỏ hàng thành công!
                                 </Text>
                             </View>
                             
@@ -583,4 +640,3 @@ const styles = StyleSheet.create({
         fontSize: 15
     }
 });
-

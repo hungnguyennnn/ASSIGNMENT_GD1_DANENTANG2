@@ -11,6 +11,7 @@ import {
 } from 'react-native';
 import axios from 'axios';
 import { useRouter } from 'expo-router';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface CartItem {
     id: string;
@@ -27,6 +28,7 @@ export default function Cart() {
     const [cartItems, setCartItems] = useState<CartItem[]>([]);
     const [totalPrice, setTotalPrice] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
+    const baseURL = 'http://192.168.1.8:3000';
 
     useEffect(() => {
         fetchCartItems();
@@ -36,19 +38,20 @@ export default function Cart() {
         calculateTotalPrice();
     }, [cartItems]);
 
+    const getUserId = async () => {
+        return await AsyncStorage.getItem('userId');
+    };
+
     const fetchCartItems = async () => {
         try {
-            const baseURL = 'http://192.168.1.8:3000';
-            const userId = '04c7';
-
+            const userId = await getUserId();
+            if (!userId) return;
+            
             const response = await axios.get(`${baseURL}/users/${userId}`);
-            console.log('Cart items response:', response.data);
-            console.log('Cart items:', response.data.cart);
             setCartItems(response.data.cart || []);
             setIsLoading(false);
         } catch (error) {
             console.error('Error fetching cart items:', error);
-            console.error('Full error details:', JSON.stringify(error, null, 2));
             setIsLoading(false);
         }
     };
@@ -63,24 +66,18 @@ export default function Cart() {
 
     const updateQuantity = async (itemId: string, newQuantity: number) => {
         try {
-            const baseURL = 'http://192.168.1.8:3000';
-            const userId = '04c7';
+            const userId = await getUserId();
+            if (!userId) return;
 
+            let updatedCart;
             if (newQuantity === 0) {
-                const updatedCart = cartItems.filter(item => item.id !== itemId);
-                await axios.patch(`${baseURL}/users/${userId}`, {
-                    cart: updatedCart
-                });
-                setIsLoading(true); // Kích hoạt load lại
+                updatedCart = cartItems.filter(item => item.id !== itemId);
             } else {
-                const updatedCart = cartItems.map(item =>
-                    item.id === itemId ? { ...item, quantity: newQuantity } : item
-                );
-                await axios.patch(`${baseURL}/users/${userId}`, {
-                    cart: updatedCart
-                });
-                setIsLoading(true); // Kích hoạt load lại
+                updatedCart = cartItems.map(item => item.id === itemId ? { ...item, quantity: newQuantity } : item);
             }
+
+            await axios.patch(`${baseURL}/users/${userId}`, { cart: updatedCart });
+            setIsLoading(true);
         } catch (error) {
             console.error('Error updating cart:', error);
         }
@@ -88,14 +85,12 @@ export default function Cart() {
 
     const removeItem = async (itemId: string) => {
         try {
-            const baseURL = 'http://192.168.1.8:3000';
-            const userId = '04c7';
-
+            const userId = await getUserId();
+            if (!userId) return;
+            
             const updatedCart = cartItems.filter(item => item.id !== itemId);
-            await axios.patch(`${baseURL}/users/${userId}`, {
-                cart: updatedCart
-            });
-            setIsLoading(true); // Kích hoạt load lại
+            await axios.patch(`${baseURL}/users/${userId}`, { cart: updatedCart });
+            setIsLoading(true);
         } catch (error) {
             console.error('Error removing item:', error);
         }
@@ -103,13 +98,11 @@ export default function Cart() {
 
     const removeAllItems = async () => {
         try {
-            const baseURL = 'http://192.168.1.8:3000';
-            const userId = '04c7';
-
-            await axios.patch(`${baseURL}/users/${userId}`, {
-                cart: []
-            });
-            setIsLoading(true); // Kích hoạt load lại
+            const userId = await getUserId();
+            if (!userId) return;
+            
+            await axios.patch(`${baseURL}/users/${userId}`, { cart: [] });
+            setIsLoading(true);
         } catch (error) {
             console.error('Error removing all items:', error);
         }
