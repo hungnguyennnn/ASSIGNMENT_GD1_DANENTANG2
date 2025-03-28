@@ -1,0 +1,138 @@
+{
+  "users": [
+    {
+      "id": "04c7",
+      "fullName": "nguyen van a",
+      "email": "test@gmail.com",
+      "phoneNumber": "0987654321",
+      "password": "123456",
+      "cart": []
+    },
+    {
+      "id": "6a2b",
+      "fullName": "nguyen van hung",
+      "email": "abc@gmail.com",
+      "phoneNumber": "0987023237",
+      "password": "hung2k54",
+      "cart": []
+    },
+    {
+      "id": "ec7uq82dw",
+      "fullName": "nguyen vna hung demo2",
+      "email": "hung@gmail.com",
+      "phoneNumber": "09876543219",
+      "password": "123456",
+      "cart": []
+    },
+    {
+      "id": "an4lo3zwk",
+      "fullName": "abc",
+      "email": "a@gmail.com",
+      "phoneNumber": "09876543213",
+      "password": "abc",
+      "cart": []
+    }
+  ],
+  "plants": [
+    {
+      "id": "1",
+      "name": "Spider Plant",
+      "price": "250.000đ",
+      "image": "https://www.flowerstation.co.uk/cdn/shop/files/spider-plant-res-brown__30216.1691515154.800.800.jpg?v=1720103432",
+      "lightPreference": "Ưa bóng",
+      "quantity": 124
+    },
+    {
+      "id": "2",
+      "name": "Song of India",
+      "price": "265.000đ",
+      "image": "https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lpok3ii87tck9c",
+      "lightPreference": "Ưa sáng",
+      "quantity": 152
+    },
+    {
+      "id": "3",
+      "name": "Grey Star Calarthea",
+      "price": "255.000đ",
+      "image": "https://cdn11.bigcommerce.com/s-oqm1pc/images/stencil/1280x1280/products/6650/27801/e1e92163-38c3-5eb4-8a2d-6caa0c79e02e__03120.1713469985.jpg?c=3",
+      "lightPreference": "Ưa bóng",
+      "quantity": 252
+    },
+    {
+      "id": "4",
+      "name": "Banana Plant",
+      "price": "175.000đ",
+      "image": "https://product.hstatic.net/200000555893/product/cay-la-dong-gia-4_b71ca425645748808aae113d4ff96dd7.jpg",
+      "lightPreference": "Ưa sáng",
+      "quantity": 352
+    }
+  ],
+  "pots": [
+    {
+      "id": "1",
+      "name": "Planta Rosewood",
+      "price": "105.000đ",
+      "image": "https://jysk.vn/Data/Sites/1/Product/11754/4912192-coc-frederik-gom-xanh-xanh-la-jysk-9.jpg",
+      "quantity": 234
+    },
+    {
+      "id": "2",
+      "name": "Planta Dove Grey",
+      "price": "150.000đ",
+      "image": "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcRxlYGGNe1kEC5GM7b89GPdNP_EIAPBLwIHvx9NojYFchAfO34W",
+      "quantity": 184
+    },
+    {
+      "id": "3",
+      "name": "Planta Trắng",
+      "price": "250.000đ",
+      "image": "https://mayflowers.ca/cdn/shop/files/IMG_6362.jpg?v=1690467312&width=493",
+      "quantity": 324
+    },
+    {
+      "id": "4",
+      "name": "Planta Lemon Balm",
+      "price": "250.000đ",
+      "image": "https://down-br.img.susercontent.com/file/sg-11134201-22120-e89n7ns51vkvb4",
+      "quantity": 294
+    }
+  ],
+  "accessories": [
+    {
+      "id": "1",
+      "name": "Bình tưới CB2 SAIC",
+      "price": "250.000đ",
+      "image": "https://cdn1.bigcommerce.com/server600/eqcqd/products/39471/images/932797/ctc1786-spwh_1__28657.1709641150.1280.1280.jpg?c=2",
+      "quantity": 154
+    },
+    {
+      "id": "2",
+      "name": "Bình xịt Xiaoda",
+      "price": "250.000đ",
+      "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRgi9nWip7wChefM5hm1FqERhlVindWNhNzjuLMp8vl-ZbcrpwJ",
+      "quantity": 204
+    },
+    {
+      "id": "3",
+      "name": "Bộ cuốc xẻng mini",
+      "price": "300.000đ",
+      "image": "https://down-vn.img.susercontent.com/file/vn-11134201-23020-pww6uxpv61nvad",
+      "quantity": 104
+    },
+    {
+      "id": "4",
+      "name": "Giá đỡ Finn Terrazzo",
+      "price": "1.250.000đ",
+      "image": "https://casanha.com/wp-content/uploads/2024/12/kiotviet_127ae7cc74e88c86e35242c50a477470.jpg",
+      "quantity": 124
+    }
+  ],
+  "combos": [
+    {
+      "id": "1",
+      "name": "Lemon Balm Grow Kit",
+      "image": "https://m.media-amazon.com/images/I/81JO+HAYIrL._AC_SY450_.jpg",
+      "subtitle": "Gồm: hạt giống Lemon Balm, giá đỡ hữu cơ, chậu Planta, marker đánh dấu..."
+    }
+  ]
+}
