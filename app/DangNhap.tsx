@@ -76,7 +76,7 @@ export default function DangNhap() {
       );
 
       if (foundUser) {
-        alert('Đăng nhập thành công!');
+        
         await saveLoginInfo();
         await AsyncStorage.setItem('userId', String(foundUser.id));
         console.log(foundUser.id);//check xem lấy dc id chưa

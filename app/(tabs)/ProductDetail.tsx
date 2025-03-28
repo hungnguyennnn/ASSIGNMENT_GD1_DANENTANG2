@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { View, Text, Image, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, Alert } from 'react-native';
+import { View, Text, Image, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView, Modal  } from 'react-native';
 import axios from 'axios';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import uuid from 'react-native-uuid';
@@ -26,6 +26,7 @@ export default function ProductDetail({ onCartUpdate }: ProductDetailProps) {
     const [product, setProduct] = useState<Product | null>(null);
     const [quantity, setQuantity] = useState(0);
     const [totalPrice, setTotalPrice] = useState(0);
+    const [modalVisible, setModalVisible] = useState(false);
 
     useEffect(() => {
         setQuantity(0); // Reset số lượng về 0 khi load sản phẩm mới
@@ -74,23 +75,37 @@ export default function ProductDetail({ onCartUpdate }: ProductDetailProps) {
         try {
             const baseURL = 'http://192.168.1.8:3000';
             const userId = '04c7'; 
-
+    
             const userResponse = await axios.get(`${baseURL}/users/${userId}`);
             const userData = userResponse.data;
     
-            // Create new cart item
-            const newCartItem = {
-                id: uuid.v4().toString(),
-                productId: product.id,
-                name: product.name,
-                price: product.price,
-                image: product.image,
-                quantity: quantity,
-                category: product.category
-            };
+            // Check if the product is already in the cart
+            const existingCartItemIndex = userData.cart ? 
+                userData.cart.findIndex((item: any) => item.productId === product.id) 
+                : -1;
     
-           
-            const updatedCart = userData.cart ? [...userData.cart, newCartItem] : [newCartItem];
+            let updatedCart;
+            if (existingCartItemIndex !== -1) {
+                // If product exists, update its quantity
+                updatedCart = [...userData.cart];
+                updatedCart[existingCartItemIndex] = {
+                    ...updatedCart[existingCartItemIndex],
+                    quantity: updatedCart[existingCartItemIndex].quantity + quantity
+                };
+            } else {
+                // If product doesn't exist, add new cart item
+                const newCartItem = {
+                    id: uuid.v4().toString(),
+                    productId: product.id,
+                    name: product.name,
+                    price: product.price,
+                    image: product.image,
+                    quantity: quantity,
+                    category: product.category
+                };
+    
+                updatedCart = userData.cart ? [...userData.cart, newCartItem] : [newCartItem];
+            }
     
             // Update user's cart
             await axios.patch(`${baseURL}/users/${userId}`, {
@@ -100,28 +115,26 @@ export default function ProductDetail({ onCartUpdate }: ProductDetailProps) {
             if (onCartUpdate) {
                 onCartUpdate();
             }
-            // Show success alert
-            Alert.alert(
-                'Thành công', 
-                `Đã thêm ${quantity} ${product.name} vào giỏ hàng`, 
-                [
-                    { 
-                        text: 'Xem giỏ hàng', 
-                        onPress: () => router.push('/(tabs)/Cart') 
-                    },
-                    { 
-                        text: 'Tiếp tục mua sắm', 
-                        style: 'cancel' 
-                    }
-                ]
-            );
-    
-          
+            
+            setModalVisible(true);
+            
+            // Reset quantity to 0
             setQuantity(0);
+            
         } catch (error) {
             console.error('Lỗi khi thêm vào giỏ hàng:', error);
-            Alert.alert('Lỗi', 'Không thể thêm sản phẩm vào giỏ hàng');
         }
+    };
+
+    // Xử lý chuyển đến trang giỏ hàng
+    const chuyenDenGioHang = () => {
+        setModalVisible(false);
+        router.push('/(tabs)/Cart');
+    };
+
+    // Xử lý tiếp tục mua sắm
+    const tiepTucMuaSam = () => {
+        setModalVisible(false);
     };
 
     if (!product) return <View style={styles.loadingContainer}><Text>Đang tải...</Text></View>;
@@ -138,6 +151,51 @@ export default function ProductDetail({ onCartUpdate }: ProductDetailProps) {
                         <Image source={require('../../assets/images/cart-icon.png')} style={styles.cartIcon} />
                     </TouchableOpacity>
                 </View>
+
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={modalVisible}
+                    onRequestClose={() => setModalVisible(false)}
+                >
+                    <View style={styles.modalOverlay}>
+                        <View style={styles.modalContainer}>
+                            {/* Tiêu đề modal */}
+                            <View style={styles.modalHeader}>
+                                <Text style={styles.modalHeaderText}>Thêm vào giỏ hàng</Text>
+                            </View>
+                            
+                            {/* Nội dung modal */}
+                            <View style={styles.modalContent}>
+                                <Image 
+                                    source={{ uri: product?.image }} 
+                                    style={styles.modalProductImage} 
+                                    resizeMode="contain"
+                                />
+                                <Text style={styles.modalMessage}>
+                                    Bạn đã thêm {quantity} {product?.name} vào giỏ hàng thành công!
+                                </Text>
+                            </View>
+                            
+                            {/* Các nút hành động */}
+                            <View style={styles.modalButtonContainer}>
+                                <TouchableOpacity 
+                                    style={styles.modalButtonCart} 
+                                    onPress={chuyenDenGioHang}
+                                >
+                                    <Text style={styles.modalButtonCartText}>Xem giỏ hàng</Text>
+                                </TouchableOpacity>
+                                
+                                <TouchableOpacity 
+                                    style={styles.modalButtonContinue} 
+                                    onPress={tiepTucMuaSam}
+                                >
+                                    <Text style={styles.modalButtonContinueText}>Tiếp tục mua sắm</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </View>
+                </Modal>
 
                 <View style={styles.imageContainer}>
                     <Image
@@ -421,5 +479,108 @@ const styles = StyleSheet.create({
         height: 24,
         tintColor: 'black', 
     },
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0,0,0,0.5)', // Màu đen mờ
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+
+    // Khung chứa modal
+    modalContainer: {
+        width: '85%', // Chiếm 85% chiều rộng màn hình
+        backgroundColor: 'white', // Nền trắng
+        borderRadius: 20, // Góc bo tròn
+        padding: 20,
+        alignItems: 'center',
+        shadowColor: '#000', // Hiệu ứng bóng
+        shadowOffset: {
+            width: 0,
+            height: 2
+        },
+        shadowOpacity: 0.25,
+        shadowRadius: 4,
+        elevation: 5 // Độ nổi cho Android
+    },
+
+    // Tiêu đề modal
+    modalHeader: {
+        width: '100%',
+        alignItems: 'center',
+        borderBottomWidth: 1,
+        borderBottomColor: '#e0e0e0', // Đường phân cách nhạt
+        paddingBottom: 10,
+        marginBottom: 15
+    },
+
+    // Chữ tiêu đề
+    modalHeaderText: {
+        fontSize: 18,
+        fontWeight: 'bold',
+        color: '#28a745' // Màu chủ đạo xanh lá
+    },
+
+    // Khung nội dung
+    modalContent: {
+        alignItems: 'center',
+        marginBottom: 20
+    },
+
+    // Hình ảnh sản phẩm trong modal
+    modalProductImage: {
+        width: 120, // Tăng kích thước
+        height: 120,
+        borderRadius: 10, // Góc bo tròn
+        marginBottom: 15
+    },
+
+    // Thông báo
+    modalMessage: {
+        fontSize: 16,
+        textAlign: 'center',
+        color: '#333',
+        marginBottom: 20,
+        paddingHorizontal: 10
+    },
+
+    // Khung chứa nút
+    modalButtonContainer: {
+        width: '100%',
+        flexDirection: 'row',
+        justifyContent: 'space-between'
+    },
+
+    // Nút Xem giỏ hàng
+    modalButtonCart: {
+        flex: 1,
+        backgroundColor: '#28a745', // Màu xanh lá
+        padding: 12,
+        borderRadius: 10,
+        marginRight: 10,
+        alignItems: 'center'
+    },
+
+    // Chữ nút Xem giỏ hàng
+    modalButtonCartText: {
+        color: 'white',
+        fontWeight: 'bold',
+        fontSize: 15
+    },
+
+    // Nút Tiếp tục mua sắm
+    modalButtonContinue: {
+        flex: 1,
+        backgroundColor: '#f0f0f0', // Nền xám nhạt
+        padding: 12,
+        borderRadius: 10,
+        alignItems: 'center'
+    },
+
+    // Chữ nút Tiếp tục mua sắm
+    modalButtonContinueText: {
+        color: '#333',
+        fontWeight: 'bold',
+        fontSize: 15
+    }
 });
 

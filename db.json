@@ -6,7 +6,16 @@
       "email": "test@gmail.com",
       "phoneNumber": "0987654321",
       "password": "123456",
-      "cart": []
+      "cart": [
+        {
+          "id": "d411ca32-f59d-4f0b-ba3f-faf1c2196ad4",
+          "productId": "2",
+          "name": "Song of India",
+          "price": "265.000đ",
+          "image": "https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lpok3ii87tck9c",
+          "quantity": 3
+        }
+      ]
     },
     {
       "id": "6a2b",
