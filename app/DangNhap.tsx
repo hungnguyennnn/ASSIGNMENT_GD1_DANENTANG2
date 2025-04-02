@@ -68,7 +68,7 @@ export default function DangNhap() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://192.168.1.8:3000/users');
+      const response = await fetch('http://10.24.31.97:3000/users');
       const users: User[] = await response.json();
       const foundUser = users.find(
         (user: User) =>

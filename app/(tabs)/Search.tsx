@@ -1,9 +1,9 @@
-
 import React, { useState, useEffect } from 'react';
 import { View, Text, Image, TouchableOpacity, StyleSheet, TextInput, FlatList } from 'react-native';
 import { useRouter } from 'expo-router';
 import axios from 'axios';
 import { Ionicons } from '@expo/vector-icons';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface Product {
   id: string;
@@ -20,13 +20,16 @@ const SearchScreen: React.FC = () => {
   const [searchTerm, setSearchTerm] = useState('');
   const [allProducts, setAllProducts] = useState<Product[]>([]);
   const [searchResults, setSearchResults] = useState<Product[]>([]);
+  const [searchHistory, setSearchHistory] = useState<string[]>([]);
+  const [showHistory, setShowHistory] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
+  // Fetch all products
   useEffect(() => {
     const fetchAllProducts = async () => {
       try {
-        const baseURL = 'http://192.168.1.8:3000';
+        const baseURL = 'http://10.24.31.43:3000';
         const [plantsRes, potsRes, accessoriesRes] = await Promise.all([
           axios.get(`${baseURL}/plants`),
           axios.get(`${baseURL}/pots`),
@@ -49,8 +52,49 @@ const SearchScreen: React.FC = () => {
     };
 
     fetchAllProducts();
+    loadSearchHistory();
   }, []);
 
+  // Load search history from AsyncStorage
+  const loadSearchHistory = async () => {
+    try {
+      const savedHistory = await AsyncStorage.getItem('searchHistory');
+      if (savedHistory) {
+        setSearchHistory(JSON.parse(savedHistory));
+      }
+    } catch (err) {
+      console.error('Lỗi khi tải lịch sử tìm kiếm:', err);
+    }
+  };
+
+  // Save search term to history
+  const saveSearchToHistory = async (term: string) => {
+    if (!term.trim()) return;
+    
+    try {
+      // Add new term to the beginning and remove duplicates
+      const updatedHistory = [term, ...searchHistory.filter(item => item !== term)];
+      // Keep only the most recent 10 searches
+      const limitedHistory = updatedHistory.slice(0, 10);
+      
+      setSearchHistory(limitedHistory);
+      await AsyncStorage.setItem('searchHistory', JSON.stringify(limitedHistory));
+    } catch (err) {
+      console.error('Lỗi khi lưu lịch sử tìm kiếm:', err);
+    }
+  };
+
+  // Handle search
+  const handleSearch = (term: string) => {
+    setSearchTerm(term);
+    setShowHistory(false);
+    
+    if (term) {
+      saveSearchToHistory(term);
+    }
+  };
+
+  // Filter products based on search term
   useEffect(() => {
     if (searchTerm) {
       const filteredProducts = allProducts.filter(product =>
@@ -74,33 +118,32 @@ const SearchScreen: React.FC = () => {
 
   const renderProductItem = ({ item }: { item: Product }) => (
     <TouchableOpacity
-      style={styles.productCard}
+      style={styles.productItem}
       onPress={() => handleProductPress(item)}
     >
-      <View style={styles.productImageContainer}>
-        <Image
-          source={{ uri: item.image }}
-          style={styles.productImage}
-        />
-      </View>
-      <View style={styles.productDetailsContainer}>
+      <Image
+        source={{ uri: item.image }}
+        style={styles.productImage}
+      />
+      <View style={styles.productInfo}>
         <Text style={styles.productName}>{item.name}</Text>
-        <View style={styles.productInfoRow}>
-          <Text style={styles.productPrice}>{item.price}</Text>
-          {item.lightPreference && (
-            <View style={styles.lightPreferenceChip}>
-              <Text style={styles.lightPreferenceText}>
-                {item.lightPreference}
-              </Text>
-            </View>
-          )}
-        </View>
+        <Text style={styles.productPrice}>{item.price}</Text>
         {item.quantity !== undefined && (
           <Text style={styles.quantityText}>
-            Còn {item.quantity} sản phẩm
+            Còn {item.quantity} sp
           </Text>
         )}
       </View>
+    </TouchableOpacity>
+  );
+
+  const renderHistoryItem = ({ item }: { item: string }) => (
+    <TouchableOpacity
+      style={styles.historyItem}
+      onPress={() => handleSearch(item)}
+    >
+      <Ionicons name="time-outline" size={16} color="#888" style={styles.historyIcon} />
+      <Text style={styles.historyText}>{item}</Text>
     </TouchableOpacity>
   );
 
@@ -122,43 +165,49 @@ const SearchScreen: React.FC = () => {
 
   return (
     <View style={styles.container}>
+      
       <View style={styles.searchContainer}>
         <View style={styles.searchInputContainer}>
+          <TextInput
+            placeholder="Tìm kiếm sản phẩm"
+            value={searchTerm}
+            onChangeText={setSearchTerm}
+            onFocus={() => setShowHistory(true)}
+            onSubmitEditing={() => handleSearch(searchTerm)}
+            style={styles.searchInput}
+          />
           <Ionicons
             name="search"
             color="#888"
             size={20}
             style={styles.searchIcon}
           />
-          <TextInput
-            placeholder="Tìm kiếm"
-            value={searchTerm}
-            onChangeText={setSearchTerm}
-            style={styles.searchInput}
-          />
-          {searchTerm ? (
-            <TouchableOpacity onPress={() => setSearchTerm('')}>
-              <Ionicons name="close" color="#888" size={20} />
-            </TouchableOpacity>
-          ) : null}
         </View>
       </View>
 
-      <FlatList
-        data={searchResults}
-        renderItem={renderProductItem}
-        keyExtractor={(item, index) => `${item.category}-${item.id}-${index}`}
-        numColumns={2}
-        columnWrapperStyle={styles.columnWrapper}
-        contentContainerStyle={styles.listContainer}
-        ListEmptyComponent={
-          searchTerm ? (
-            <View style={styles.centerContainer}>
-              <Text>Không tìm thấy sản phẩm</Text>
-            </View>
-          ) : null
-        }
-      />
+      {showHistory && searchHistory.length > 0 && !searchTerm ? (
+        <FlatList
+          data={searchHistory}
+          renderItem={renderHistoryItem}
+          keyExtractor={(item, index) => `history-${index}`}
+          style={styles.historyList}
+          contentContainerStyle={styles.historyListContent}
+        />
+      ) : (
+        <FlatList
+          data={searchResults}
+          renderItem={renderProductItem}
+          keyExtractor={(item, index) => `${item.category}-${item.id}-${index}`}
+          contentContainerStyle={styles.listContainer}
+          ListEmptyComponent={
+            searchTerm ? (
+              <View style={styles.centerContainer}>
+                <Text>Không tìm thấy sản phẩm</Text>
+              </View>
+            ) : null
+          }
+        />
+      )}
     </View>
   );
 };
@@ -166,31 +215,74 @@ const SearchScreen: React.FC = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#f5f5f5',
-    paddingTop: 36,
+    backgroundColor: '#fff',
+    marginTop:50,
+  },
+  header: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingTop: 40,
+    paddingBottom: 10,
+    paddingHorizontal: 16,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  backButton: {
+    marginRight: 10,
+  },
+  headerTitle: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    textAlign: 'center',
+    flex: 1,
+    marginRight: 24, // To center the text properly accounting for back button
   },
   searchContainer: {
-    padding: 16,
-    backgroundColor: 'white',
+    padding: 12,
+    backgroundColor: '#fff',
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
   },
   searchInputContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#f0f0f0',
-    borderRadius: 10,
+    backgroundColor: '#f7f7f7',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: '#e0e0e0',
     paddingHorizontal: 12,
-    paddingVertical: 8,
+    height: 36,
   },
   searchIcon: {
-    marginRight: 10,
+    marginLeft: 6,
   },
   searchInput: {
     flex: 1,
-    fontSize: 16,
+    fontSize: 15,
+    height: 36,
   },
-  columnWrapper: {
-    justifyContent: 'space-between',
+  historyList: {
+    backgroundColor: 'white',
+    borderBottomWidth: 1,
+    borderBottomColor: '#eee',
+  },
+  historyListContent: {
     paddingHorizontal: 16,
+  },
+  historyItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+  },
+  historyIcon: {
+    marginRight: 12,
+  },
+  historyText: {
+    fontSize: 15,
+    color: '#333',
   },
   listContainer: {
     paddingBottom: 16,
@@ -205,67 +297,38 @@ const styles = StyleSheet.create({
     color: 'red',
     textAlign: 'center',
   },
-  productCard: {
-    width: '48%',
-    marginBottom: 16,
-    backgroundColor: '#f9f9f9',
-    borderRadius: 8,
-    padding: 8,
-    alignItems: 'center',
-    shadowColor: '#000',
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 2,
-  },
-  productImageContainer: {
-    backgroundColor: '#f5f5f5',
-    aspectRatio: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    width: '100%',
+  productItem: {
+    flexDirection: 'row',
+    padding: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+    backgroundColor: '#fff',
   },
   productImage: {
-    width: '100%',
-    height: 150,
-    resizeMode: 'contain',
-    borderRadius: 18,
+    width: 60,
+    height: 60,
+    borderRadius: 4,
+    marginRight: 14,
   },
-  productDetailsContainer: {
-    padding: 8,
-    width: '100%',
-  },
-  productInfoRow: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginTop: 4,
+  productInfo: {
+    flex: 1,
+    justifyContent: 'center',
   },
   productName: {
-    fontSize: 14,
+    fontSize: 15,
+    fontWeight: '500',
     color: '#333',
-    textAlign: 'left',
+    marginBottom: 4,
   },
   productPrice: {
     fontSize: 14,
-    color: '#28a745',
     fontWeight: '600',
-  },
-  lightPreferenceChip: {
-    backgroundColor: '#e6f3e6',
-    paddingHorizontal: 8,
-    paddingVertical: 4,
-    borderRadius: 4,
-  },
-  lightPreferenceText: {
-    fontSize: 12,
     color: '#28a745',
-    fontWeight: '600',
+    marginBottom: 2,
   },
   quantityText: {
     fontSize: 12,
     color: '#666',
-    marginTop: 4,
   },
 });
 

@@ -10,7 +10,7 @@ import {
   StyleSheet,
   TouchableWithoutFeedback
 } from 'react-native';
-
+import { API_CONFIG } from '../config'; 
 export default function DangKy() {
   const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
@@ -47,7 +47,7 @@ export default function DangKy() {
 
     try {
       // Kiểm tra số điện thoại đã tồn tại chưa
-      const checkPhoneResponse = await fetch(`http://192.168.1.8:3000/users?phoneNumber=${phoneNumber}`);
+      const checkPhoneResponse = await fetch(`${API_CONFIG.baseURL}/users?phoneNumber=${phoneNumber}`);
       const existingUsers = await checkPhoneResponse.json();
 
       if (existingUsers.length > 0) {
@@ -55,7 +55,7 @@ export default function DangKy() {
         return;
       }
 
-      const checkEmailResponse = await fetch(`http://192.168.1.8:3000/users?email=${email}`);
+      const checkEmailResponse = await fetch(`http://10.24.31.97:3000/users?email=${email}`);
       const existingEmails = await checkEmailResponse.json();
 
       if (existingEmails.length > 0) {
@@ -73,7 +73,7 @@ export default function DangKy() {
         cart: []
       };
 
-      const response = await fetch('http://192.168.1.8:3000/users', {
+      const response = await fetch(`${API_CONFIG.baseURL}/users`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(newUser),

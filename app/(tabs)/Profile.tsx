@@ -8,7 +8,8 @@ import axios from 'axios';
 
 type RootStackParamList = {
   DangNhap: undefined;
-  Profile: undefined;  // Nhận ID từ route params
+  Profile: undefined;
+  EditProfile: { user: User }; // Nhận ID từ route params
 };
 
 type User = {
@@ -28,14 +29,14 @@ export default function Profile() {
       try {
         const userId = await AsyncStorage.getItem('userId');
         if (!userId) return;
-  
-        const response = await axios.get<User>(`http://192.168.1.8:3000/users/${userId}`);
+
+        const response = await axios.get<User>(`http://10.24.31.97:3000/users/${userId}`);
         setUser(response.data);
       } catch (error) {
         console.error('Lỗi tải thông tin người dùng:', error);
       }
     };
-  
+
     fetchUserProfile();
   }, []);
 
@@ -58,8 +59,8 @@ export default function Profile() {
     <View style={styles.container}>
       <Text style={styles.Textheader}>PROFILE</Text>
       <View style={styles.profileHeader}>
-        <Image 
-          source={{ uri: `https://ui-avatars.com/api/?name=${user.fullName.replace(' ', '+')}` }} 
+        <Image
+          source={{ uri: `https://ui-avatars.com/api/?name=${user.fullName.replace(' ', '+')}` }}
           style={styles.profileImage}
         />
         <View style={styles.userInfo}>
@@ -72,7 +73,10 @@ export default function Profile() {
         <TouchableOpacity style={styles.menuItem}>
           <Text style={styles.TextItem}>Chung</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.menuItem1}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('EditProfile', { user })}
+          style={styles.menuItem1}
+        >
           <Text>Chỉnh sửa thông tin</Text>
         </TouchableOpacity>
         <TouchableOpacity style={styles.menuItem1}>
@@ -93,8 +97,8 @@ export default function Profile() {
         <TouchableOpacity style={styles.menuItem1}>
           <Text>Chính sách quyền riêng tư</Text>
         </TouchableOpacity>
-        <TouchableOpacity 
-          style={[styles.menuItem, styles.logoutMenuItem]} 
+        <TouchableOpacity
+          style={[styles.menuItem, styles.logoutMenuItem]}
           onPress={handleLogout}
         >
           <Text style={styles.logoutText}>Đăng xuất</Text>
@@ -116,7 +120,7 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 24,
     fontWeight: 'bold',
-  
+
   },
   profileHeader: {
     flexDirection: 'row',

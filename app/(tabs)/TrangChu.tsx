@@ -45,7 +45,7 @@ const TrangChu: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const baseURL = 'http://192.168.1.8:3000';
+        const baseURL = 'http://10.24.31.97:3000';
         const [plantsRes, potsRes, accessoriesRes, combosRes] = await Promise.all([
           axios.get(`${baseURL}/plants`),
           axios.get(`${baseURL}/pots`),

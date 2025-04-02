@@ -23,48 +23,57 @@
       "email": "abc@gmail.com",
       "phoneNumber": "0987023237",
       "password": "hung2k54",
-      "cart": [
-        {
-          "id": "65344720-21dd-4c6c-b139-98c4715d2b75",
-          "productId": "2",
-          "name": "Planta Dove Grey",
-          "price": "150.000đ",
-          "image": "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcRxlYGGNe1kEC5GM7b89GPdNP_EIAPBLwIHvx9NojYFchAfO34W",
-          "quantity": 3
-        },
-        {
-          "id": "741bed44-610f-4bc2-9b25-10bc115bb652",
-          "productId": "3",
-          "name": "Planta Trắng",
-          "price": "250.000đ",
-          "image": "https://mayflowers.ca/cdn/shop/files/IMG_6362.jpg?v=1690467312&width=493",
-          "quantity": 1
-        },
-        {
-          "id": "54c0aa4a-65cd-4306-b230-16055c0c2a77",
-          "productId": "4",
-          "name": "Giá đỡ Finn Terrazzo",
-          "price": "1.250.000đ",
-          "image": "https://casanha.com/wp-content/uploads/2024/12/kiotviet_127ae7cc74e88c86e35242c50a477470.jpg",
-          "quantity": 3
-        }
-      ]
+      "cart": []
     },
     {
-      "id": "ec7uq82dw",
       "fullName": "nguyen vna hung demo2",
       "email": "hung@gmail.com",
       "phoneNumber": "09876543219",
-      "password": "123456",
-      "cart": []
+      "id": "ec7uq82dw",
+      "cart": [
+        {
+          "id": "c1287d75-995b-4030-85db-b9ccb265c8d7",
+          "productId": "1",
+          "name": "Spider Plant",
+          "price": "250.000đ",
+          "image": "https://www.flowerstation.co.uk/cdn/shop/files/spider-plant-res-brown__30216.1691515154.800.800.jpg?v=1720103432",
+          "quantity": 2
+        },
+        {
+          "id": "589be036-c676-4e35-9048-f28df4e76523",
+          "productId": "1a",
+          "name": "Planta Rosewood",
+          "price": "105.000đ",
+          "image": "https://jysk.vn/Data/Sites/1/Product/11754/4912192-coc-frederik-gom-xanh-xanh-la-jysk-9.jpg",
+          "quantity": 1
+        },
+        {
+          "id": "637173f9-b02d-4bbe-a564-1e9359cb8de0",
+          "productId": "2",
+          "name": "Song of India",
+          "price": "265.000đ",
+          "image": "https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lpok3ii87tck9c",
+          "quantity": 1
+        }
+      ],
+      "password": "abc123"
     },
     {
-      "id": "an4lo3zwk",
-      "fullName": "abc",
-      "email": "a@gmail.com",
-      "phoneNumber": "09876543213",
-      "password": "abc",
-      "cart": []
+      "fullName": "nguyen van hung",
+      "email": "vhung@gmail.com",
+      "phoneNumber": "09870232377",
+      "id": "c6pwvd6y7",
+      "cart": [
+        {
+          "id": "0bf2a14c-3330-4339-aa3f-cfe96229743c",
+          "productId": "4a",
+          "name": "Planta Lemon Balm",
+          "price": "250.000đ",
+          "image": "https://down-br.img.susercontent.com/file/sg-11134201-22120-e89n7ns51vkvb4",
+          "quantity": 7
+        }
+      ],
+      "password": "123456"
     }
   ],
   "plants": [
@@ -74,7 +83,7 @@
       "price": "250.000đ",
       "image": "https://www.flowerstation.co.uk/cdn/shop/files/spider-plant-res-brown__30216.1691515154.800.800.jpg?v=1720103432",
       "lightPreference": "Ưa bóng",
-      "quantity": 124
+      "quantity": 116
     },
     {
       "id": "2",
@@ -82,7 +91,7 @@
       "price": "265.000đ",
       "image": "https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lpok3ii87tck9c",
       "lightPreference": "Ưa sáng",
-      "quantity": 152
+      "quantity": 150
     },
     {
       "id": "3",
@@ -103,58 +112,58 @@
   ],
   "pots": [
     {
-      "id": "1",
+      "id": "1a",
       "name": "Planta Rosewood",
       "price": "105.000đ",
       "image": "https://jysk.vn/Data/Sites/1/Product/11754/4912192-coc-frederik-gom-xanh-xanh-la-jysk-9.jpg",
-      "quantity": 234
+      "quantity": 228
     },
     {
-      "id": "2",
+      "id": "2a",
       "name": "Planta Dove Grey",
       "price": "150.000đ",
       "image": "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcRxlYGGNe1kEC5GM7b89GPdNP_EIAPBLwIHvx9NojYFchAfO34W",
-      "quantity": 182
+      "quantity": 181
     },
     {
-      "id": "3",
+      "id": "3a",
       "name": "Planta Trắng",
       "price": "250.000đ",
       "image": "https://mayflowers.ca/cdn/shop/files/IMG_6362.jpg?v=1690467312&width=493",
       "quantity": 323
     },
     {
-      "id": "4",
+      "id": "4a",
       "name": "Planta Lemon Balm",
       "price": "250.000đ",
       "image": "https://down-br.img.susercontent.com/file/sg-11134201-22120-e89n7ns51vkvb4",
-      "quantity": 294
+      "quantity": 292
     }
   ],
   "accessories": [
     {
-      "id": "1",
+      "id": "1b",
       "name": "Bình tưới CB2 SAIC",
       "price": "250.000đ",
       "image": "https://cdn1.bigcommerce.com/server600/eqcqd/products/39471/images/932797/ctc1786-spwh_1__28657.1709641150.1280.1280.jpg?c=2",
-      "quantity": 154
+      "quantity": 153
     },
     {
-      "id": "2",
+      "id": "2b",
       "name": "Bình xịt Xiaoda",
       "price": "250.000đ",
       "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRgi9nWip7wChefM5hm1FqERhlVindWNhNzjuLMp8vl-ZbcrpwJ",
       "quantity": 204
     },
     {
-      "id": "3",
+      "id": "3b",
       "name": "Bộ cuốc xẻng mini",
       "price": "300.000đ",
       "image": "https://down-vn.img.susercontent.com/file/vn-11134201-23020-pww6uxpv61nvad",
       "quantity": 104
     },
     {
-      "id": "4",
+      "id": "4b",
       "name": "Giá đỡ Finn Terrazzo",
       "price": "1.250.000đ",
       "image": "https://casanha.com/wp-content/uploads/2024/12/kiotviet_127ae7cc74e88c86e35242c50a477470.jpg",

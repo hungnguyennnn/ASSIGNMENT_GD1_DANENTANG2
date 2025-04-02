@@ -46,7 +46,7 @@ export default function ProductDetail({ onCartUpdate }: ProductDetailProps) {
             console.log('Params received:', { id, category });
 
             try {
-                const baseURL = 'http://192.168.1.8:3000';
+                const baseURL = 'http://10.24.31.97:3000';
                 console.log('Full URL:', `${baseURL}/${category}/${id}`);
                 const response = await axios.get(`${baseURL}/${category}/${id}`);
                 console.log('Response data:', response.data);
@@ -76,8 +76,7 @@ export default function ProductDetail({ onCartUpdate }: ProductDetailProps) {
                 if (storedUserId) {
                     setUserId(storedUserId);
                 } else {
-                    // If no user ID is found, you might want to handle this case 
-                    // (e.g., redirect to login, show an error)
+                   
                     Alert.alert('Lỗi', 'Vui lòng đăng nhập');
                 }
             } catch (error) {
@@ -104,7 +103,7 @@ export default function ProductDetail({ onCartUpdate }: ProductDetailProps) {
         }
     
         try {
-            const baseURL = 'http://192.168.1.8:3000';
+            const baseURL = 'http://10.24.31.97:3000';
     
             // Fetch current user data
             const userResponse = await axios.get(`${baseURL}/users/${userId}`);
@@ -230,7 +229,7 @@ export default function ProductDetail({ onCartUpdate }: ProductDetailProps) {
                                     resizeMode="contain"
                                 />
                                 <Text style={styles.modalMessage}>
-                                    Bạn đã thêm {product?.name} vào giỏ hàng thành công!
+                                    Bạn đã thêm {quantity} {product?.name} vào giỏ hàng thành công!
                                 </Text>
                             </View>
                             

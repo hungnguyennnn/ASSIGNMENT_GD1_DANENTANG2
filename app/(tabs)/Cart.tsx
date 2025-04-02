@@ -10,7 +10,7 @@ import {
     Alert
 } from 'react-native';
 import axios from 'axios';
-import { useRouter } from 'expo-router';
+import { useRouter,useFocusEffect  } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 interface CartItem {
@@ -28,11 +28,14 @@ export default function Cart() {
     const [cartItems, setCartItems] = useState<CartItem[]>([]);
     const [totalPrice, setTotalPrice] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
-    const baseURL = 'http://192.168.1.8:3000';
+    const baseURL = 'http://10.24.31.97:3000';
 
-    useEffect(() => {
-        fetchCartItems();
-    }, [isLoading]);
+    useFocusEffect(
+        React.useCallback(() => {
+            fetchCartItems();
+            return () => {};
+        }, [])
+    );
 
     useEffect(() => {
         calculateTotalPrice();
@@ -78,6 +81,7 @@ export default function Cart() {
 
             await axios.patch(`${baseURL}/users/${userId}`, { cart: updatedCart });
             setIsLoading(true);
+            fetchCartItems();
         } catch (error) {
             console.error('Error updating cart:', error);
         }
@@ -91,6 +95,7 @@ export default function Cart() {
             const updatedCart = cartItems.filter(item => item.id !== itemId);
             await axios.patch(`${baseURL}/users/${userId}`, { cart: updatedCart });
             setIsLoading(true);
+            fetchCartItems();
         } catch (error) {
             console.error('Error removing item:', error);
         }
@@ -103,6 +108,7 @@ export default function Cart() {
             
             await axios.patch(`${baseURL}/users/${userId}`, { cart: [] });
             setIsLoading(true);
+            fetchCartItems();
         } catch (error) {
             console.error('Error removing all items:', error);
         }
@@ -162,9 +168,9 @@ export default function Cart() {
                     <Text style={styles.backButtonText}>←</Text>
                 </TouchableOpacity>
 
-                <TouchableOpacity onPress={fetchCartItems} style={styles.reloadButton}>
+                
                     <Text style={styles.headerTitle}>Giỏ Hàng</Text>
-                </TouchableOpacity>
+                
 
                 {cartItems.length > 0 && (
                     <TouchableOpacity onPress={() => {
@@ -185,9 +191,7 @@ export default function Cart() {
                     </TouchableOpacity>
                 )}
             </View>
-            <View style={styles.notificationBar}>
-                <Text style={styles.notificationText}>!!!Bấm "Giỏ Hàng" để load lại!!!</Text>
-            </View>
+         
 
             <ScrollView style={styles.scrollContainer}>
                 {cartItems.length === 0 ? (
@@ -363,24 +367,10 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight: 'bold',
     },
-    reloadButton: {
-        padding: 10,
-        marginLeft: 10,
-    },
+   
     reloadButtonText: {
         fontSize: 24,
         color: 'black',
     },
-    notificationBar: {
-        backgroundColor: '#ffeb3b',
-        paddingVertical: 8,
-        paddingHorizontal: 16,
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    notificationText: {
-        color: '#333',
-        fontSize: 14,
-        fontWeight: 'bold',
-    },
+    
 });

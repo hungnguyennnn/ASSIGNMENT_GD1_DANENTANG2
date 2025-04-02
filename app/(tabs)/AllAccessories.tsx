@@ -27,7 +27,7 @@ const AllAccessories: React.FC = () => {
     useEffect(() => {
         const fetchAccessories = async () => {
             try {
-                const baseURL = 'http://192.168.1.8:3000';
+                const baseURL = 'http://10.24.31.97:3000';
                 const response = await axios.get(`${baseURL}/accessories`);
 
                 setAccessories(response.data);
