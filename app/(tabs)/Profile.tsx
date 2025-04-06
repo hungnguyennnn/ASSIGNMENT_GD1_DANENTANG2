@@ -3,7 +3,7 @@ import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { API_CONFIG } from '../../config';
 import axios from 'axios';
 
 type RootStackParamList = {
@@ -30,7 +30,7 @@ export default function Profile() {
         const userId = await AsyncStorage.getItem('userId');
         if (!userId) return;
 
-        const response = await axios.get<User>(`http://10.24.31.97:3000/users/${userId}`);
+        const response = await axios.get<User>(`${API_CONFIG.baseURL}/users/${userId}`);
         setUser(response.data);
       } catch (error) {
         console.error('Lỗi tải thông tin người dùng:', error);

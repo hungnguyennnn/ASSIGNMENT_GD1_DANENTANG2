@@ -55,7 +55,8 @@ export default function DangKy() {
         return;
       }
 
-      const checkEmailResponse = await fetch(`http://10.24.31.97:3000/users?email=${email}`);
+      const checkEmailResponse = await fetch(`${API_CONFIG.baseURL}/users?email=${email}`);
+
       const existingEmails = await checkEmailResponse.json();
 
       if (existingEmails.length > 0) {

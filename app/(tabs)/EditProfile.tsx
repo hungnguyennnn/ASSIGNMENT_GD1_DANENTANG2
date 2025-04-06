@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { View, TextInput, Text, TouchableOpacity, StyleSheet } from 'react-native';
 import { useNavigation, useRoute } from '@react-navigation/native';
 import axios from 'axios';
-
+import { API_CONFIG } from '../../config';
 type User = {
     id: number;
     fullName: string;
@@ -49,7 +49,7 @@ export default function EditProfile() {
                 updateData.password = user.password;
             }
             
-            const response = await axios.put(`http://10.24.31.97:3000/users/${user.id}`, updateData);
+            const response = await axios.put(`${API_CONFIG.baseURL}/users/${user.id}`, updateData);
             navigation.goBack();
         } catch (error) {
             console.error('Lỗi cập nhật thông tin:', error);

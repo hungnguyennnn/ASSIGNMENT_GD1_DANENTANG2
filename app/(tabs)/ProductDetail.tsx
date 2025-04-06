@@ -4,7 +4,7 @@ import axios from 'axios';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import uuid from 'react-native-uuid';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { API_CONFIG } from '../../config';
 
 
 interface Product {
@@ -46,7 +46,7 @@ export default function ProductDetail({ onCartUpdate }: ProductDetailProps) {
             console.log('Params received:', { id, category });
 
             try {
-                const baseURL = 'http://10.24.31.97:3000';
+                const baseURL = `${API_CONFIG.baseURL}`;
                 console.log('Full URL:', `${baseURL}/${category}/${id}`);
                 const response = await axios.get(`${baseURL}/${category}/${id}`);
                 console.log('Response data:', response.data);
@@ -96,7 +96,7 @@ export default function ProductDetail({ onCartUpdate }: ProductDetailProps) {
             return;
         }
 
-        // Validate user is logged in
+       
         if (!userId) {
             Alert.alert('Lỗi', 'Vui lòng đăng nhập để thêm sản phẩm vào giỏ hàng');
             return;

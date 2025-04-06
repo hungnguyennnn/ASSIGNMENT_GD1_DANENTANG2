@@ -4,7 +4,7 @@ import { useRouter } from 'expo-router';
 import axios from 'axios';
 import { Ionicons } from '@expo/vector-icons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { API_CONFIG } from '../../config';
 interface Product {
   id: string;
   name: string;
@@ -29,7 +29,7 @@ const SearchScreen: React.FC = () => {
   useEffect(() => {
     const fetchAllProducts = async () => {
       try {
-        const baseURL = 'http://10.24.31.43:3000';
+        const baseURL = `${API_CONFIG.baseURL}`;
         const [plantsRes, potsRes, accessoriesRes] = await Promise.all([
           axios.get(`${baseURL}/plants`),
           axios.get(`${baseURL}/pots`),

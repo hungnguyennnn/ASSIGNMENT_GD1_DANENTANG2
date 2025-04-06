@@ -6,16 +6,7 @@
       "email": "test@gmail.com",
       "phoneNumber": "0987654321",
       "password": "123456",
-      "cart": [
-        {
-          "id": "d03cdd03-ab1c-4c1c-a941-fb724fb9e3af",
-          "productId": "1",
-          "name": "Spider Plant",
-          "price": "250.000đ",
-          "image": "https://www.flowerstation.co.uk/cdn/shop/files/spider-plant-res-brown__30216.1691515154.800.800.jpg?v=1720103432",
-          "quantity": 1
-        }
-      ]
+      "cart": []
     },
     {
       "id": "6a2b",

@@ -12,7 +12,7 @@ import {
 import axios from 'axios';
 import { useRouter,useFocusEffect  } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { API_CONFIG } from '../../config';
 interface CartItem {
     id: string;
     productId: string;
@@ -28,7 +28,7 @@ export default function Cart() {
     const [cartItems, setCartItems] = useState<CartItem[]>([]);
     const [totalPrice, setTotalPrice] = useState(0);
     const [isLoading, setIsLoading] = useState(false);
-    const baseURL = 'http://10.24.31.97:3000';
+    const baseURL = `${API_CONFIG.baseURL}`;
 
     useFocusEffect(
         React.useCallback(() => {

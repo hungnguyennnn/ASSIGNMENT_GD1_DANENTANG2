@@ -12,7 +12,7 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-
+import { API_CONFIG } from '../config';
 export default function DangNhap() {
   const [isRemembered, setIsRemembered] = useState(false);
   const [email, setEmail] = useState('');
@@ -68,7 +68,7 @@ export default function DangNhap() {
     setIsLoading(true);
 
     try {
-      const response = await fetch('http://10.24.31.97:3000/users');
+      const response = await fetch(`${API_CONFIG.baseURL}/users`);
       const users: User[] = await response.json();
       const foundUser = users.find(
         (user: User) =>
@@ -80,7 +80,7 @@ export default function DangNhap() {
         
         await saveLoginInfo();
         await AsyncStorage.setItem('userId', String(foundUser.id));
-        console.log(foundUser.id);//check xem lấy dc id chưa
+        console.log(foundUser.id);
         router.replace('/(tabs)/TrangChu');
       } else {
         setLoginError('Thông tin đăng nhập không chính xác, vui lòng thử lại!');

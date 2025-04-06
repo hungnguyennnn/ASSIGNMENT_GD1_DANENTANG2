@@ -11,7 +11,7 @@ import {
   FlatList,
 } from 'react-native';
 import axios from 'axios';
-
+import { API_CONFIG } from '../../config';
 const { width } = Dimensions.get('window');
 
 interface Product {
@@ -45,7 +45,7 @@ const TrangChu: React.FC = () => {
   useEffect(() => {
     const fetchData = async () => {
       try {
-        const baseURL = 'http://10.24.31.97:3000';
+        const baseURL = `${API_CONFIG.baseURL}`;
         const [plantsRes, potsRes, accessoriesRes, combosRes] = await Promise.all([
           axios.get(`${baseURL}/plants`),
           axios.get(`${baseURL}/pots`),

@@ -1,4 +1,4 @@
 export const API_CONFIG = {
     
-    baseURL: 'http://10.24.31.43:3000',
+    baseURL: 'http://192.168.0.108:3000',
   };
