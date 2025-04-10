@@ -28,6 +28,7 @@ export default function DangNhap() {
     email: string;
     phoneNumber: string;
     password: string;
+    isAdmin?: boolean;
   }
 
   useEffect(() => {
@@ -77,11 +78,15 @@ export default function DangNhap() {
       );
 
       if (foundUser) {
-        
         await saveLoginInfo();
         await AsyncStorage.setItem('userId', String(foundUser.id));
-        console.log(foundUser.id);
-        router.replace('/(tabs)/TrangChu');
+        
+        // Check if user is admin and redirect accordingly
+        if (foundUser.isAdmin) {
+          router.replace('/admin/_layoutAdmin'); 
+        } else {
+          router.replace('/(tabs)/TrangChu'); 
+        }
       } else {
         setLoginError('Thông tin đăng nhập không chính xác, vui lòng thử lại!');
       }
@@ -89,7 +94,7 @@ export default function DangNhap() {
       console.error('Lỗi:', error);
       setLoginError('Có lỗi xảy ra, vui lòng thử lại!');
     }
-
+  
     setIsLoading(false);
   };
 

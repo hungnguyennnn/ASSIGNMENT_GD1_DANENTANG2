@@ -158,12 +158,7 @@ const TrangChu: React.FC = () => {
          
           <TouchableOpacity 
             style={styles.newItemsButton}
-            onPress={() => {
-              // Navigate to new items or perform action
-              // router.push({
-              //   pathname: "/(tabs)/NewItems"
-              // });
-            }}
+            
           >
             <Text style={styles.newItemsButtonText}>Xem hàng mới về</Text>
             <Text style={styles.arrow}>→</Text>
@@ -174,13 +169,10 @@ const TrangChu: React.FC = () => {
       {/* Plants Section */}
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Cây trồng</Text>
-        <FlatList
-          data={products.plants}
-          renderItem={({ item }) => renderProduct(item)}
-          keyExtractor={(item) => item.id}
-          numColumns={2}
-          scrollEnabled={false}
-        />
+        
+        <View style={styles.productGrid}>
+          {products.plants.slice(0, 4).map(renderProduct)}
+        </View>
         <TouchableOpacity
           style={styles.viewMoreButton}
           onPress={() => {
@@ -201,7 +193,7 @@ const TrangChu: React.FC = () => {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Chậu cây trồng</Text>
         <View style={styles.productGrid}>
-          {products.pots.map(renderProduct)}
+          {products.pots.slice(0, 4).map(renderProduct)}
         </View>
 
         <TouchableOpacity
@@ -226,7 +218,7 @@ const TrangChu: React.FC = () => {
       <View style={styles.section}>
         <Text style={styles.sectionTitle}>Phụ kiện</Text>
         <View style={styles.productGrid}>
-          {products.accessories.map(renderProduct)}
+          {products.accessories.slice(0, 4).map(renderProduct)}
         </View>
         <TouchableOpacity
           style={styles.viewMoreButton}

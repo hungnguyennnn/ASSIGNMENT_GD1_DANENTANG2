@@ -1,12 +1,29 @@
 {
   "users": [
     {
+      "id": "admin",
+      "fullName": "Admin",
+      "email": "admin@gmail.com",
+      "phoneNumber": "",
+      "password": "admin",
+      "isAdmin": true
+    },
+    {
       "id": "04c7",
       "fullName": "nguyen van a",
       "email": "test@gmail.com",
       "phoneNumber": "0987654321",
       "password": "123456",
-      "cart": []
+      "cart": [
+        {
+          "id": "0710a125-8647-4c3f-a00f-85bf7797c4e9",
+          "productId": "1",
+          "name": "Spider Plant",
+          "price": "250.000đ",
+          "image": "https://www.flowerstation.co.uk/cdn/shop/files/spider-plant-res-brown__30216.1691515154.800.800.jpg?v=1720103432",
+          "quantity": 1
+        }
+      ]
     },
     {
       "id": "6a2b",
@@ -21,32 +38,7 @@
       "email": "hung@gmail.com",
       "phoneNumber": "09876543219",
       "id": "ec7uq82dw",
-      "cart": [
-        {
-          "id": "c1287d75-995b-4030-85db-b9ccb265c8d7",
-          "productId": "1",
-          "name": "Spider Plant",
-          "price": "250.000đ",
-          "image": "https://www.flowerstation.co.uk/cdn/shop/files/spider-plant-res-brown__30216.1691515154.800.800.jpg?v=1720103432",
-          "quantity": 2
-        },
-        {
-          "id": "589be036-c676-4e35-9048-f28df4e76523",
-          "productId": "1a",
-          "name": "Planta Rosewood",
-          "price": "105.000đ",
-          "image": "https://jysk.vn/Data/Sites/1/Product/11754/4912192-coc-frederik-gom-xanh-xanh-la-jysk-9.jpg",
-          "quantity": 1
-        },
-        {
-          "id": "637173f9-b02d-4bbe-a564-1e9359cb8de0",
-          "productId": "2",
-          "name": "Song of India",
-          "price": "265.000đ",
-          "image": "https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lpok3ii87tck9c",
-          "quantity": 1
-        }
-      ],
+      "cart": [],
       "password": "abc123"
     },
     {
@@ -54,17 +46,16 @@
       "email": "vhung@gmail.com",
       "phoneNumber": "09870232377",
       "id": "c6pwvd6y7",
-      "cart": [
-        {
-          "id": "0bf2a14c-3330-4339-aa3f-cfe96229743c",
-          "productId": "4a",
-          "name": "Planta Lemon Balm",
-          "price": "250.000đ",
-          "image": "https://down-br.img.susercontent.com/file/sg-11134201-22120-e89n7ns51vkvb4",
-          "quantity": 7
-        }
-      ],
+      "cart": [],
       "password": "123456"
+    },
+    {
+      "id": "vh588qwqq",
+      "fullName": "hehe",
+      "email": "hehe@gmail.com",
+      "phoneNumber": "0123456789",
+      "password": "hehe123",
+      "cart": []
     }
   ],
   "plants": [
@@ -74,7 +65,7 @@
       "price": "250.000đ",
       "image": "https://www.flowerstation.co.uk/cdn/shop/files/spider-plant-res-brown__30216.1691515154.800.800.jpg?v=1720103432",
       "lightPreference": "Ưa bóng",
-      "quantity": 116
+      "quantity": 115
     },
     {
       "id": "2",
@@ -99,6 +90,30 @@
       "image": "https://product.hstatic.net/200000555893/product/cay-la-dong-gia-4_b71ca425645748808aae113d4ff96dd7.jpg",
       "lightPreference": "Ưa sáng",
       "quantity": 352
+    },
+    {
+      "name": "cay hoa hong",
+      "price": "175.000đ",
+      "image": "https://cayxanhgiapham.com/wp-content/uploads/2020/07/cay-hoa-hong-150x150.jpg",
+      "quantity": 35,
+      "lightPreference": "Ưa sáng",
+      "id": "5"
+    },
+    {
+      "id": "6",
+      "name": "Banana Plant",
+      "price": "175.000đ",
+      "image": "https://product.hstatic.net/200000555893/product/cay-la-dong-gia-4_b71ca425645748808aae113d4ff96dd7.jpg",
+      "lightPreference": "Ưa sáng",
+      "quantity": 352
+    },
+    {
+      "id": "0783",
+      "name": "cay tre",
+      "price": "200.00d",
+      "image": "https://storage.yeubonsai.vn/Data/2023/12/02/cay-tre-3-638371520309931454.jpg?w=800&format=webp",
+      "quantity": 20,
+      "lightPreference": "Ưa sáng"
     }
   ],
   "pots": [
@@ -140,11 +155,11 @@
       "quantity": 153
     },
     {
-      "id": "2b",
-      "name": "Bình xịt Xiaoda",
+      "name": "Bình xịt Xiaoda new",
       "price": "250.000đ",
       "image": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRgi9nWip7wChefM5hm1FqERhlVindWNhNzjuLMp8vl-ZbcrpwJ",
-      "quantity": 204
+      "quantity": 204,
+      "id": "2b"
     },
     {
       "id": "3b",

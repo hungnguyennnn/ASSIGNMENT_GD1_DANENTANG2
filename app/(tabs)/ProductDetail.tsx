@@ -103,7 +103,7 @@ export default function ProductDetail({ onCartUpdate }: ProductDetailProps) {
         }
     
         try {
-            const baseURL = 'http://10.24.31.97:3000';
+            const baseURL = `${API_CONFIG.baseURL}`;
     
             // Fetch current user data
             const userResponse = await axios.get(`${baseURL}/users/${userId}`);
@@ -229,7 +229,7 @@ export default function ProductDetail({ onCartUpdate }: ProductDetailProps) {
                                     resizeMode="contain"
                                 />
                                 <Text style={styles.modalMessage}>
-                                    Bạn đã thêm {quantity} {product?.name} vào giỏ hàng thành công!
+                                    Bạn đã thêm {product?.name} vào giỏ hàng thành công!
                                 </Text>
                             </View>
                             
