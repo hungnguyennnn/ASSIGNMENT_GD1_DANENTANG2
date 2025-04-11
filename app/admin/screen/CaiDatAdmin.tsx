@@ -2,7 +2,7 @@ import React from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, ScrollView } from 'react-native';
 import { router, Stack } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { Feather } from '@expo/vector-icons';
+import { Feather, FontAwesome5, MaterialIcons, MaterialCommunityIcons } from '@expo/vector-icons';
 
 export default function CaiDatAdmin() {
   const handleLogout = async () => {
@@ -14,6 +14,10 @@ export default function CaiDatAdmin() {
     }
   };
 
+  const handleDoanhThu = () => {
+    router.push('/admin/screen/DoanhThu');
+  };
+
   return (
     <>
       <Stack.Screen options={{ headerShown: false }} />
@@ -21,23 +25,26 @@ export default function CaiDatAdmin() {
         <View style={styles.header}>
           <Text style={styles.headerTitle}>Cài Đặt</Text>
         </View>
-        
+
         <View style={styles.content}>
           <ScrollView style={styles.contentScroll}>
             <Text style={styles.sectionTitle}>Cài Đặt Hệ Thống</Text>
             <View style={styles.settingsContainer}>
               <TouchableOpacity style={styles.settingItem}>
-                <Feather name="user" size={24} color="#007537" />
-                <Text style={styles.settingText}>Thông tin cá nhân</Text>
+                <FontAwesome5 name="question-circle" size={24} color="#007537" />
+                <Text style={styles.settingText}>Q&A</Text>
               </TouchableOpacity>
-              <TouchableOpacity style={styles.settingItem}>
-                <Feather name="lock" size={24} color="#007537" />
-                <Text style={styles.settingText}>Đổi mật khẩu</Text>
+
+              <TouchableOpacity style={styles.settingItem} onPress={handleDoanhThu}>
+                <MaterialIcons name="attach-money" size={24} color="#007537" />
+                <Text style={styles.settingText}>Doanh Thu</Text>
               </TouchableOpacity>
+
               <TouchableOpacity style={styles.settingItem}>
-                <Feather name="bell" size={24} color="#007537" />
+                <MaterialCommunityIcons name="bell-ring-outline" size={24} color="#007537" />
                 <Text style={styles.settingText}>Thông báo</Text>
               </TouchableOpacity>
+
               <TouchableOpacity style={styles.logoutButton} onPress={handleLogout}>
                 <Feather name="log-out" size={24} color="white" />
                 <Text style={styles.logoutText}>Đăng Xuất</Text>
@@ -78,7 +85,6 @@ const styles = StyleSheet.create({
     margin: 16,
     color: '#333',
     textAlign: 'center',
-    justifyContent: 'center'
   },
   settingsContainer: {
     margin: 16,

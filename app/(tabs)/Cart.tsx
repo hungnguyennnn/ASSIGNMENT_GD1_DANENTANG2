@@ -10,7 +10,7 @@ import {
     Alert
 } from 'react-native';
 import axios from 'axios';
-import { useRouter,useFocusEffect  } from 'expo-router';
+import { useRouter, useFocusEffect } from 'expo-router';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_CONFIG } from '../../config';
 interface CartItem {
@@ -114,6 +114,28 @@ export default function Cart() {
         }
     };
 
+    const navigateToCheckout = async () => {
+        try {
+            const userId = await getUserId();
+            if (!userId) {
+                Alert.alert('Thông báo', 'Vui lòng đăng nhập để thanh toán');
+                router.push('./DangNhap');
+                return;
+            }
+
+            if (cartItems.length === 0) {
+                Alert.alert('Thông báo', 'Giỏ hàng của bạn trống, vui lòng thêm sản phẩm vào giỏ hàng');
+                return;
+            }
+
+            // Chuyển đến trang thanh toán
+            router.push('/ThanhToan');
+        } catch (error) {
+            console.error('Lỗi khi chuyển đến trang thanh toán:', error);
+            Alert.alert('Lỗi', 'Không thể chuyển đến trang thanh toán. Vui lòng thử lại sau.');
+        }
+    };
+
     const renderCartItem = (item: CartItem) => (
         <View key={item.id} style={styles.cartItemContainer}>
             <Image
@@ -213,10 +235,7 @@ export default function Cart() {
                         </View>
                         <TouchableOpacity
                             style={styles.checkoutButton}
-                            onPress={() => {
-
-                                Alert.alert('Thông báo', 'Chức năng thanh toán đang được phát triển');
-                            }}
+                            onPress={navigateToCheckout}
                         >
                             <Text style={styles.checkoutButtonText}>THANH TOÁN</Text>
                         </TouchableOpacity>
@@ -372,5 +391,4 @@ const styles = StyleSheet.create({
         fontSize: 24,
         color: 'black',
     },
-    
 });

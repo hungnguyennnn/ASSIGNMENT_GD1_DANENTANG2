@@ -2,9 +2,9 @@ import React, { useState } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView } from 'react-native';
 import { Stack } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
-import TongQuanAdmin from './TongQuanAdmin';
-import NguoiDungAdmin from './NguoiDungAdmin';
-import CaiDatAdmin from './CaiDatAdmin';
+import TongQuanAdmin from './screen/TongQuanAdmin';
+import NguoiDungAdmin from './screen/NguoiDungAdmin';
+import CaiDatAdmin from './screen/CaiDatAdmin';
 
 export default function TrangChuAdmin() {
   const [activeTab, setActiveTab] = useState('dashboard');

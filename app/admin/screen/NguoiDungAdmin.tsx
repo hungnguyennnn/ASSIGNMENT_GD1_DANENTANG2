@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, SafeAreaView, ScrollView, ActivityIndicator } from 'react-native';
 import { Stack } from 'expo-router';
 import { Feather } from '@expo/vector-icons';
-import { API_CONFIG } from '../../config';
+import { API_CONFIG } from '../../../config';
 interface User {
   id: string;
   fullName: string;

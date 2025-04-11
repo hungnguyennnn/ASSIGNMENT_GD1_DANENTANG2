@@ -2,17 +2,20 @@ import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, SafeAreaView, Image, ActivityIndicator, TextInput, FlatList, Modal, Alert } from 'react-native';
 import { Stack } from 'expo-router';
 import { Feather, AntDesign } from '@expo/vector-icons';
-import { API_CONFIG } from '../../config';
 import { Picker } from '@react-native-picker/picker';
 
-type Product = {
-  id: string;
-  name: string;
-  image: string;
-  price: string;
-  quantity: number;
-  lightPreference?: string; // Chỉ cho plants
-};
+// Import từ các file đã tách
+import { 
+  Product, 
+  FormData, 
+  fetchProducts, 
+  deleteProduct, 
+  saveProduct, 
+  filterProducts, 
+  validateProductForm 
+} from '../services/sanpham';
+import { Order, fetchOrders,updateOrderStatus, translateOrderStatus } from '../services/donhang';
+import { fetchStats } from '../services/thongke';
 
 export default function TongQuanAdmin() {
   const [activeSection, setActiveSection] = useState('products');
@@ -22,6 +25,7 @@ export default function TongQuanAdmin() {
   const [accessories, setAccessories] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [userCount, setUserCount] = useState(0);
+  const [orders, setOrders] = useState<Order[]>([]);
   
   // State cho tìm kiếm
   const [searchQuery, setSearchQuery] = useState('');
@@ -30,80 +34,81 @@ export default function TongQuanAdmin() {
   const [modalVisible, setModalVisible] = useState(false);
   const [isEditMode, setIsEditMode] = useState(false);
   const [currentProduct, setCurrentProduct] = useState<Product | null>(null);
-  
+  const [totalRevenue, setTotalRevenue] = useState<string>("0đ");
   // State cho form thêm/sửa sản phẩm
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FormData>({
     id: '',
     name: '',
     price: '',
     image: '',
     quantity: '0',
-    lightPreference: 'Ưa sáng', // Chỉ cho plants
-    category: 'plants' // 'plants', 'pots', 'accessories'
+    lightPreference: 'Ưa sáng',
+    category: 'plants'
   });
 
   // Gọi API để lấy dữ liệu
   useEffect(() => {
-    fetchData();
+    loadAllData();
   }, []);
 
-  //tính số người dùng app 
-  useEffect(() => {
-    fetch(`${API_CONFIG.baseURL}/users`)
-      .then((res) => res.json())
-      .then((data) => setUserCount(data.length))
-      .catch((err) => console.error(err));
-  }, []);
-  const fetchData = async () => {
-    try {
-      setLoading(true);
-      
-      // Lấy dữ liệu cây
-      const plantsResponse = await fetch(`${API_CONFIG.baseURL}/plants`);
-      const plantsData = await plantsResponse.json();
-      setPlants(plantsData);
-      
-      // Lấy dữ liệu chậu
-      const potsResponse = await fetch(`${API_CONFIG.baseURL}/pots`);
-      const potsData = await potsResponse.json();
-      setPots(potsData);
-      
-      // Lấy dữ liệu phụ kiện
-      const accessoriesResponse = await fetch(`${API_CONFIG.baseURL}/accessories`);
-      const accessoriesData = await accessoriesResponse.json();
-      setAccessories(accessoriesData);
-      
-      setLoading(false);
-    } catch (error) {
-      console.error('Lỗi khi tải dữ liệu:', error);
-      setLoading(false);
-    }
+  const loadAllData = async () => {
+    setLoading(true);
+    
+    // Lấy dữ liệu sản phẩm
+    const productData = await fetchProducts();
+    setPlants(productData.plants);
+    setPots(productData.pots);
+    setAccessories(productData.accessories);
+    
+    // Lấy dữ liệu đơn hàng
+    const orderData = await fetchOrders();
+    setOrders(orderData);
+    
+    const revenue = calculateTotalRevenue(orderData);
+    setTotalRevenue(revenue);
+    
+    // Lấy dữ liệu thống kê
+    const statsData = await fetchStats(
+      productData.plants.length + productData.pots.length + productData.accessories.length
+    );
+    setUserCount(statsData.userCount);
+    
+    setLoading(false);
   };
-
+// Hàm tính tổng doanh thu
+  const calculateTotalRevenue = (orderList: Order[]): string => {
+    let total = 0;
+    
+    orderList.forEach(order => {
+      
+      const priceString = order.totalPrice.replace(/[^\d]/g, '');
+      const price = parseInt(priceString, 10);
+      
+      if (!isNaN(price)) {
+        total += price;
+      }
+    });
+    
+    return total.toLocaleString('vi-VN') + 'đ';
+  };
   // Xác định danh sách sản phẩm hiện tại dựa trên loại sản phẩm được chọn
   const getCurrentProducts = () => {
-    let filteredProducts: Product[] = [];
+    let products: Product[] = [];
     
     switch (productType) {
       case 'plants':
-        filteredProducts = plants;
+        products = plants;
         break;
       case 'pots':
-        filteredProducts = pots;
+        products = pots;
         break;
       case 'accessories':
-        filteredProducts = accessories;
+        products = accessories;
         break;
     }
     
     // Lọc theo từ khóa tìm kiếm
-    if (searchQuery) {
-      return filteredProducts.filter(item => 
-        item.name.toLowerCase().includes(searchQuery.toLowerCase())
-      );
-    }
-    
-    return filteredProducts;
+    return filterProducts(products, searchQuery);
   };
 
   // Mở modal thêm sản phẩm mới
@@ -127,7 +132,7 @@ export default function TongQuanAdmin() {
     setIsEditMode(true);
     setCurrentProduct(product);
     
-    const formDataWithCategory = {
+    setFormData({
       id: product.id,
       name: product.name,
       price: product.price,
@@ -135,9 +140,8 @@ export default function TongQuanAdmin() {
       quantity: product.quantity.toString(),
       lightPreference: product.lightPreference || 'Ưa sáng',
       category: productType
-    };
+    });
     
-    setFormData(formDataWithCategory);
     setModalVisible(true);
   };
 
@@ -155,18 +159,12 @@ export default function TongQuanAdmin() {
           text: "Xóa", 
           style: "destructive",
           onPress: async () => {
-            try {
-              // Gọi API xóa sản phẩm
-              await fetch(`${API_CONFIG.baseURL}/${productType}/${product.id}`, {
-                method: 'DELETE',
-              });
-              
-              // Cập nhật lại danh sách sản phẩm
-              fetchData();
-              
+            const success = await deleteProduct(productType, product.id);
+            
+            if (success) {
+              loadAllData();
               Alert.alert("Thành công", "Đã xóa sản phẩm thành công!");
-            } catch (error) {
-              console.error('Lỗi khi xóa sản phẩm:', error);
+            } else {
               Alert.alert("Lỗi", "Không thể xóa sản phẩm. Vui lòng thử lại sau.");
             }
           }
@@ -178,63 +176,45 @@ export default function TongQuanAdmin() {
   // Xử lý khi bấm nút lưu trong modal
   const handleSaveProduct = async () => {
     // Kiểm tra dữ liệu nhập vào
-    if (!formData.name || !formData.price || !formData.image || !formData.quantity) {
-      Alert.alert("Thiếu thông tin", "Vui lòng nhập đầy đủ thông tin sản phẩm.");
+    if (!validateProductForm(formData)) {
       return;
     }
-  
-    // Nếu là cây, kiểm tra thêm lightPreference
-    if (formData.category === 'plants' && !formData.lightPreference) {
-      Alert.alert("Thiếu thông tin", "Vui lòng chọn điều kiện ánh sáng cho cây.");
-      return;
-    }
-  
-    try {
-      const endpoint = formData.category;
-      const productData: any = {
-        name: formData.name,
-        price: formData.price,
-        image: formData.image,
-        quantity: parseInt(formData.quantity),
-      };
-  
-      if (formData.category === 'plants') {
-        productData.lightPreference = formData.lightPreference;
-      }
-  
-      let url = `${API_CONFIG.baseURL}/${endpoint}`;
-      let method = 'POST';
-  
-      if (isEditMode && currentProduct) {
-        url = `${url}/${currentProduct.id}`;
-        method = 'PUT';
-        productData.id = currentProduct.id;
-      }
-  
-      const response = await fetch(url, {
-        method: method,
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(productData),
-      });
-  
-      if (!response.ok) {
-        throw new Error('Lỗi khi lưu sản phẩm');
-      }
-  
-      fetchData();
+    
+    const success = await saveProduct(
+      formData, 
+      isEditMode,
+      currentProduct?.id
+    );
+    
+    if (success) {
+      loadAllData();
       setModalVisible(false);
       Alert.alert(
         "Thành công",
         isEditMode ? "Sản phẩm đã được cập nhật!" : "Sản phẩm mới đã được thêm!"
       );
-    } catch (error) {
-      console.error('Lỗi khi lưu sản phẩm:', error);
+    } else {
       Alert.alert("Lỗi", "Không thể lưu sản phẩm. Vui lòng thử lại sau.");
     }
   };
+
+  // Thêm hàm filterOrders để lọc đơn hàng theo ID
+const filterOrders = (orders: Order[], query: string): Order[] => {
+  if (!query.trim()) {
+    return orders;
+  }
   
+  const lowerCaseQuery = query.toLowerCase().trim();
+  
+  return orders.filter(order => 
+    // Lọc theo ID đơn hàng
+    order.id.toLowerCase().includes(lowerCaseQuery) ||
+    // Tùy chọn: lọc thêm theo tên khách hàng
+    order.fullName.toLowerCase().includes(lowerCaseQuery) ||
+    // Tùy chọn: lọc thêm theo số điện thoại
+    order.phoneNumber.includes(lowerCaseQuery)
+  );
+};
 
   // Render một item trong FlatList
   const renderProductItem = ({ item }: { item: Product }) => (
@@ -302,7 +282,6 @@ export default function TongQuanAdmin() {
           }
         />
 
-        {/* Nút thêm sản phẩm */}
         <TouchableOpacity 
           style={styles.addButton}
           onPress={handleAddProduct}
@@ -354,32 +333,125 @@ export default function TongQuanAdmin() {
 
   // Render nội dung cho tab đơn hàng
   const renderOrdersContent = () => {
+    const filteredOrders = filterOrders(orders, searchQuery);
     return (
       <View style={styles.sectionContent}>
         <Text style={styles.sectionTitle}>Quản Lý Đơn Hàng</Text>
-        <FlatList
-          data={[
-            { id: 'ORD001', customer: 'Nguyễn Văn Hùng', total: '550.000đ', status: 'pending' },
-            { id: 'ORD002', customer: 'Nguyễn Văn A', total: '350.000đ', status: 'completed' }
-          ]}
-          keyExtractor={item => item.id}
-          renderItem={({ item }) => (
-            <View style={styles.orderItem}>
-              <Text style={styles.orderID}>#{item.id}</Text>
-              <Text style={styles.orderInfo}>Khách hàng: {item.customer}</Text>
-              <Text style={styles.orderInfo}>Tổng tiền: {item.total}</Text>
-              <View style={item.status === 'pending' ? styles.statusPending : styles.statusCompleted}>
-                <Text style={styles.statusText}>
-                  {item.status === 'pending' ? 'Đang xử lý' : 'Hoàn thành'}
-                </Text>
+        <View style={styles.searchContainerDn}>
+            <TextInput
+              style={styles.searchInput}
+              placeholder="Tìm kiếm..."
+              value={searchQuery}
+              onChangeText={setSearchQuery}
+            />
+            <Feather name="search" size={18} color="#666" style={styles.searchIcon} />
+          </View>
+        {loading ? (
+          <ActivityIndicator size="large" color="#007537" style={styles.loader} />
+        ) : (
+          <FlatList
+            data={filteredOrders}
+            keyExtractor={item => item.id}
+            renderItem={({ item }) => (
+              <View style={styles.orderItem}>
+                <View style={styles.orderHeader}>
+                  <Text style={styles.orderID}>#{item.id}</Text>
+                  <Text style={styles.orderDate}>
+                    {new Date(item.createdAt).toLocaleDateString('vi-VN')}
+                  </Text>
+                </View>
+                
+                <View style={styles.orderDetails}>
+                  <Text style={styles.orderInfo}>
+                    <Text style={styles.orderLabel}>Khách hàng: </Text>
+                    {item.fullName}
+                  </Text>
+                  <Text style={styles.orderInfo}>
+                    <Text style={styles.orderLabel}>SĐT: </Text>
+                    {item.phoneNumber}
+                  </Text>
+                  <Text style={styles.orderInfo}>
+                    <Text style={styles.orderLabel}>Địa chỉ: </Text>
+                    {item.address}
+                  </Text>
+                  <Text style={styles.orderInfo}>
+                    <Text style={styles.orderLabel}>Số lượng sản phẩm: </Text>
+                    {item.products.length}
+                  </Text>
+                  <Text style={styles.orderPrice}>Tổng tiền: {item.totalPrice}</Text>
+                  <Text style={styles.orderPayment}>
+                    Phương thức: {item.paymentMethod === 'cod' ? 'Tiền mặt khi nhận hàng' : 'Chuyển khoản'}
+                  </Text>
+                </View>
+                
+                <View style={styles.orderActions}>
+                  <View style={[
+                    styles.statusBadge,
+                    item.status === 'pending' ? styles.statusPending : styles.statusCompleted
+                  ]}>
+                    <Text style={styles.statusText}>
+                      {translateOrderStatus(item.status)}
+                    </Text>
+                  </View>
+                  
+                  <TouchableOpacity 
+                    style={styles.statusUpdateButton}
+                    onPress={() => handleUpdateOrderStatus(item)}
+                  >
+                    <Text style={styles.updateButtonText}>
+                      {item.status === 'pending' ? 'Đánh dấu hoàn thành' : 'Đánh dấu đang xử lý'}
+                    </Text>
+                  </TouchableOpacity>
+                </View>
               </View>
-            </View>
-          )}
-        />
+            )}
+            ListEmptyComponent={
+              <Text style={styles.emptyText}>Không có đơn hàng nào</Text>
+            }
+          />
+        )}
       </View>
     );
   };
-
+// Thêm hàm xử lý cập nhật trạng thái đơn hàng
+  const handleUpdateOrderStatus = async (order: Order) => {
+    const newStatus = order.status === 'pending' ? 'completed' : 'pending';
+    
+    Alert.alert(
+      "Xác nhận thay đổi",
+      `Bạn có chắc muốn chuyển trạng thái đơn hàng sang "${translateOrderStatus(newStatus)}"?`,
+      [
+        {
+          text: "Hủy",
+          style: "cancel"
+        },
+        {
+          text: "Xác nhận",
+          onPress: async () => {
+            setLoading(true);
+            const success = await updateOrderStatus(order.id, newStatus);
+            
+            if (success) {
+              // Tải lại dữ liệu đơn hàng
+              const orderData = await fetchOrders();
+              setOrders(orderData);
+              
+              Alert.alert(
+                "Thành công", 
+                `Đã cập nhật trạng thái đơn hàng thành "${translateOrderStatus(newStatus)}"`
+              );
+            } else {
+              Alert.alert(
+                "Lỗi", 
+                "Không thể cập nhật trạng thái đơn hàng. Vui lòng thử lại sau."
+              );
+            }
+            setLoading(false);
+          }
+        }
+      ]
+    );
+  };
   // Render nội dung cho tab thống kê
   const renderStatsContent = () => {
     return (
@@ -391,7 +463,7 @@ export default function TongQuanAdmin() {
             <Text style={styles.statLabel}>Người dùng</Text>
           </View>
           <View style={styles.statCard}>
-            <Text style={styles.statNumber}>2</Text>
+            <Text style={styles.statNumber}>{orders.length}</Text>
             <Text style={styles.statLabel}>Đơn hàng</Text>
           </View>
           <View style={styles.statCard}>
@@ -399,10 +471,17 @@ export default function TongQuanAdmin() {
             <Text style={styles.statLabel}>Sản phẩm</Text>
           </View>
         </View>
+        
+        {/* Thêm thẻ để hiển thị tổng doanh thu */}
+        <View style={styles.revenueCard}>
+          <Text style={styles.revenueLabel}>Tổng doanh thu:</Text>
+          <Text style={styles.revenueNumber}>{totalRevenue}</Text>
+        </View>
+        
+        {/* Có thể thêm biểu đồ thống kê ở đây nếu cần */}
       </View>
     );
   };
-  
 
   // Content for top tabs
   const renderTopTabContent = () => {
@@ -659,6 +738,7 @@ const styles = StyleSheet.create({
     shadowRadius: 4,
     elevation: 2,
   },
+  
   activeStatCard: {
     borderColor: '#007537',
     borderWidth: 2,
@@ -705,6 +785,7 @@ const styles = StyleSheet.create({
     height: 36,
     width: '50%',
   },
+ 
   searchInput: {
     flex: 1,
     fontSize: 14,
@@ -781,6 +862,21 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.1,
     shadowRadius: 4,
     elevation: 2,
+  },
+  searchContainerDn: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: 'white',
+    borderRadius: 10,
+    paddingHorizontal: 12,
+    height: 36,
+    width: '100%',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+    marginBottom:10
   },
   orderID: {
     fontSize: 16,
@@ -928,5 +1024,88 @@ const styles = StyleSheet.create({
     color: 'white',
     fontSize: 16,
     fontWeight: 'bold',
-  }
+  },
+  orderHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginBottom: 8,
+    borderBottomWidth: 1,
+    borderBottomColor: '#f0f0f0',
+    paddingBottom: 8,
+  },
+  orderDate: {
+    fontSize: 14,
+    color: '#666',
+  },
+  orderDetails: {
+    marginVertical: 8,
+  },
+  orderLabel: {
+    fontWeight: 'bold',
+    color: '#555',
+  },
+  orderPrice: {
+    fontSize: 15,
+    fontWeight: 'bold',
+    color: '#007537',
+    marginTop: 4,
+  },
+  orderPayment: {
+    fontSize: 14,
+    color: '#666',
+    fontStyle: 'italic',
+    marginTop: 2,
+  },
+  orderActions: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    marginTop: 12,
+    borderTopWidth: 1,
+    borderTopColor: '#f0f0f0',
+    paddingTop: 12,
+  },
+  statusBadge: {
+    borderRadius: 4,
+    paddingVertical: 4,
+    paddingHorizontal: 8,
+    alignSelf: 'flex-start',
+  },
+
+  statusUpdateButton: {
+    backgroundColor: '#007537',
+    borderRadius: 4,
+    paddingVertical: 8,
+    paddingHorizontal: 12,
+  },
+  updateButtonText: {
+    color: 'white',
+    fontSize: 12,
+    fontWeight: 'bold',
+  },
+  revenueCard: {
+    backgroundColor: 'white',
+    borderRadius: 8,
+    padding: 20,
+    marginTop: 20,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
+  },
+  revenueLabel: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+  },
+  revenueNumber: {
+    fontSize: 22,
+    fontWeight: 'bold',
+    color: '#007537',
+  },
 });

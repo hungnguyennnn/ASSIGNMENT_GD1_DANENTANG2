@@ -9,29 +9,30 @@
       "isAdmin": true
     },
     {
-      "id": "04c7",
       "fullName": "nguyen van a",
       "email": "test@gmail.com",
       "phoneNumber": "0987654321",
-      "password": "123456",
-      "cart": [
-        {
-          "id": "0710a125-8647-4c3f-a00f-85bf7797c4e9",
-          "productId": "1",
-          "name": "Spider Plant",
-          "price": "250.000đ",
-          "image": "https://www.flowerstation.co.uk/cdn/shop/files/spider-plant-res-brown__30216.1691515154.800.800.jpg?v=1720103432",
-          "quantity": 1
-        }
-      ]
+      "id": "04c7",
+      "cart": [],
+      "password": "123456"
     },
     {
-      "id": "6a2b",
       "fullName": "nguyen van hung",
       "email": "abc@gmail.com",
       "phoneNumber": "0987023237",
-      "password": "hung2k54",
-      "cart": []
+      "avatar": "https://i.pravatar.cc/150?img=5",
+      "id": "6a2b",
+      "cart": [
+        {
+          "id": "4bb15ebf-5033-456a-a36b-e71cc422ed83",
+          "productId": "1a",
+          "name": "Planta Rosewood",
+          "price": "105.000đ",
+          "image": "https://jysk.vn/Data/Sites/1/Product/11754/4912192-coc-frederik-gom-xanh-xanh-la-jysk-9.jpg",
+          "quantity": 3
+        }
+      ],
+      "password": "hung2k54"
     },
     {
       "fullName": "nguyen vna hung demo2",
@@ -73,7 +74,7 @@
       "price": "265.000đ",
       "image": "https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lpok3ii87tck9c",
       "lightPreference": "Ưa sáng",
-      "quantity": 150
+      "quantity": 147
     },
     {
       "id": "3",
@@ -81,7 +82,7 @@
       "price": "255.000đ",
       "image": "https://cdn11.bigcommerce.com/s-oqm1pc/images/stencil/1280x1280/products/6650/27801/e1e92163-38c3-5eb4-8a2d-6caa0c79e02e__03120.1713469985.jpg?c=3",
       "lightPreference": "Ưa bóng",
-      "quantity": 252
+      "quantity": 251
     },
     {
       "id": "4",
@@ -89,7 +90,7 @@
       "price": "175.000đ",
       "image": "https://product.hstatic.net/200000555893/product/cay-la-dong-gia-4_b71ca425645748808aae113d4ff96dd7.jpg",
       "lightPreference": "Ưa sáng",
-      "quantity": 352
+      "quantity": 350
     },
     {
       "name": "cay hoa hong",
@@ -122,14 +123,14 @@
       "name": "Planta Rosewood",
       "price": "105.000đ",
       "image": "https://jysk.vn/Data/Sites/1/Product/11754/4912192-coc-frederik-gom-xanh-xanh-la-jysk-9.jpg",
-      "quantity": 228
+      "quantity": 224
     },
     {
       "id": "2a",
       "name": "Planta Dove Grey",
       "price": "150.000đ",
       "image": "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcRxlYGGNe1kEC5GM7b89GPdNP_EIAPBLwIHvx9NojYFchAfO34W",
-      "quantity": 181
+      "quantity": 180
     },
     {
       "id": "3a",
@@ -182,6 +183,114 @@
       "name": "Lemon Balm Grow Kit",
       "image": "https://m.media-amazon.com/images/I/81JO+HAYIrL._AC_SY450_.jpg",
       "subtitle": "Gồm: hạt giống Lemon Balm, giá đỡ hữu cơ, chậu Planta, marker đánh dấu..."
+    }
+  ],
+  "orders": [
+    {
+      "id": "ord-586749",
+      "userId": "04c7",
+      "fullName": "nguyen van hung",
+      "email": "test@gmail.com",
+      "phoneNumber": "0987654321",
+      "address": "nguyen co thanh nam tu liem ha noi",
+      "products": [
+        {
+          "id": "0710a125-8647-4c3f-a00f-85bf7797c4e9",
+          "productId": "1",
+          "name": "Spider Plant",
+          "price": "250.000đ",
+          "image": "https://www.flowerstation.co.uk/cdn/shop/files/spider-plant-res-brown__30216.1691515154.800.800.jpg?v=1720103432",
+          "quantity": 1
+        },
+        {
+          "id": "a53951fe-70af-429d-a8ed-6a389e183811",
+          "productId": "2",
+          "name": "Song of India",
+          "price": "265.000đ",
+          "image": "https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lpok3ii87tck9c",
+          "quantity": 1
+        },
+        {
+          "id": "c34a7a06-5208-4c56-8b25-089e30f32f90",
+          "productId": "3",
+          "name": "Grey Star Calarthea",
+          "price": "255.000đ",
+          "image": "https://cdn11.bigcommerce.com/s-oqm1pc/images/stencil/1280x1280/products/6650/27801/e1e92163-38c3-5eb4-8a2d-6caa0c79e02e__03120.1713469985.jpg?c=3",
+          "quantity": 1
+        },
+        {
+          "id": "c244f422-03c8-4bb5-a61b-35ac84b03cdc",
+          "productId": "4",
+          "name": "Banana Plant",
+          "price": "175.000đ",
+          "image": "https://product.hstatic.net/200000555893/product/cay-la-dong-gia-4_b71ca425645748808aae113d4ff96dd7.jpg",
+          "quantity": 1
+        },
+        {
+          "id": "93bf04c8-ac85-4123-be4d-4e8e06b06bc8",
+          "productId": "1a",
+          "name": "Planta Rosewood",
+          "price": "105.000đ",
+          "image": "https://jysk.vn/Data/Sites/1/Product/11754/4912192-coc-frederik-gom-xanh-xanh-la-jysk-9.jpg",
+          "quantity": 1
+        },
+        {
+          "id": "91a43b53-0f12-4340-9316-15dce77963b5",
+          "productId": "2a",
+          "name": "Planta Dove Grey",
+          "price": "150.000đ",
+          "image": "https://encrypted-tbn1.gstatic.com/images?q=tbn:ANd9GcRxlYGGNe1kEC5GM7b89GPdNP_EIAPBLwIHvx9NojYFchAfO34W",
+          "quantity": 1
+        }
+      ],
+      "totalPrice": "1,200,000đ",
+      "status": "completed",
+      "paymentMethod": "bank",
+      "createdAt": "2025-04-11T15:16:26.749Z"
+    },
+    {
+      "id": "ord-856683",
+      "userId": "04c7",
+      "fullName": "hehe",
+      "email": "test@gmail.com",
+      "phoneNumber": "0987654321",
+      "address": "nguyen co thanh nam tu liem ha noi",
+      "products": [
+        {
+          "id": "ff263439-7a59-4b59-9b1e-2d603755cd8a",
+          "productId": "2",
+          "name": "Song of India",
+          "price": "265.000đ",
+          "image": "https://down-vn.img.susercontent.com/file/vn-11134207-7r98o-lpok3ii87tck9c",
+          "quantity": 1
+        }
+      ],
+      "totalPrice": "265,000đ",
+      "status": "pending",
+      "paymentMethod": "cod",
+      "createdAt": "2025-04-11T15:20:56.683Z"
+    },
+    {
+      "id": "ord-057117",
+      "userId": "6a2b",
+      "fullName": "nguyen van hung",
+      "email": "abc@gmail.com",
+      "phoneNumber": "0987023237",
+      "address": "ha nam ",
+      "products": [
+        {
+          "id": "7dd83002-6ebb-489e-9c55-9fc133973a9f",
+          "productId": "4",
+          "name": "Banana Plant",
+          "price": "175.000đ",
+          "image": "https://product.hstatic.net/200000555893/product/cay-la-dong-gia-4_b71ca425645748808aae113d4ff96dd7.jpg",
+          "quantity": 1
+        }
+      ],
+      "totalPrice": "175,000đ",
+      "status": "completed",
+      "paymentMethod": "cod",
+      "createdAt": "2025-04-11T19:17:37.118Z"
     }
   ]
 }

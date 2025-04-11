@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { View, Text, TouchableOpacity, StyleSheet, Image } from 'react-native';
 import { NativeStackNavigationProp } from '@react-navigation/native-stack';
-import { useNavigation, useRoute, RouteProp } from '@react-navigation/native';
+import { useNavigation, useRoute, RouteProp, useFocusEffect } from '@react-navigation/native';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { API_CONFIG } from '../../config';
 import axios from 'axios';
@@ -9,7 +9,7 @@ import axios from 'axios';
 type RootStackParamList = {
   DangNhap: undefined;
   Profile: undefined;
-  EditProfile: { user: User }; // Nhận ID từ route params
+  EditProfile: { user: User }; // Receive ID from route params
 };
 
 type User = {
@@ -17,6 +17,7 @@ type User = {
   fullName: string;
   email: string;
   phoneNumber: string;
+  avatar?: string;
 };
 
 export default function Profile() {
@@ -24,21 +25,30 @@ export default function Profile() {
   const route = useRoute<RouteProp<RootStackParamList, 'Profile'>>();
   const [user, setUser] = useState<User | null>(null);
 
+  const fetchUserProfile = async () => {
+    try {
+      const userId = await AsyncStorage.getItem('userId');
+      if (!userId) return;
+
+      const response = await axios.get<User>(`${API_CONFIG.baseURL}/users/${userId}`);
+      setUser(response.data);
+    } catch (error) {
+      console.error('Error loading user information:', error);
+    }
+  };
+
+  // Load user data when the component mounts
   useEffect(() => {
-    const fetchUserProfile = async () => {
-      try {
-        const userId = await AsyncStorage.getItem('userId');
-        if (!userId) return;
-
-        const response = await axios.get<User>(`${API_CONFIG.baseURL}/users/${userId}`);
-        setUser(response.data);
-      } catch (error) {
-        console.error('Lỗi tải thông tin người dùng:', error);
-      }
-    };
-
     fetchUserProfile();
   }, []);
+
+  // Refresh user data when the screen comes into focus (after editing)
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchUserProfile();
+      return () => {};
+    }, [])
+  );
 
   const handleLogout = () => {
     navigation.reset({
@@ -60,7 +70,9 @@ export default function Profile() {
       <Text style={styles.Textheader}>PROFILE</Text>
       <View style={styles.profileHeader}>
         <Image
-          source={{ uri: `https://ui-avatars.com/api/?name=${user.fullName.replace(' ', '+')}` }}
+          source={{ 
+            uri: user.avatar || `https://ui-avatars.com/api/?name=${user.fullName.replace(' ', '+')}` 
+          }}
           style={styles.profileImage}
         />
         <View style={styles.userInfo}>
@@ -120,7 +132,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
     fontSize: 24,
     fontWeight: 'bold',
-
   },
   profileHeader: {
     flexDirection: 'row',
